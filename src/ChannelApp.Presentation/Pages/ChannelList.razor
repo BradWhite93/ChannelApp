@@ -1,0 +1,135 @@
+@page "/channels"
+@inject IChannelService ChannelService
+@inject AppState AppState
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@implements IDisposable
+
+<PageTitle>Channels</PageTitle>
+
+<div class="channel-list-page">
+    <BackToHome />
+    <div class="channel-list-controls">
+        <SearchBar SearchText="@_searchText" OnSearchChanged="OnSearchChanged" />
+        <h2 class="filter-heading">Filters</h2>
+        <div class="filter-row">
+            <PlaybackFilter IsActive="@_playbackActive" OnToggle="OnPlaybackToggle" />
+            <button class="toggle-country-btn @(_showCountry ? "active" : "")"
+                    @onclick="ToggleCountry"
+                    aria-pressed="@_showCountry.ToString().ToLowerInvariant()"
+                    aria-label="Show country">
+                Show Country
+            </button>
+        </div>
+    </div>
+
+    @if (_filteredChannels.Count == 0)
+    {
+        <EmptyState Message="@_emptyMessage" />
+    }
+    else
+    {
+        <div role="list">
+            @foreach (var channel in _filteredChannels)
+            {
+                <ChannelItem Channel="@channel" ShowCountry="@_showCountry" />
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? Category { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string? Country { get; set; }
+
+    [SupplyParameterFromQuery(Name = "favourites")]
+    public bool? Favourites { get; set; }
+
+    private string _searchText = "";
+    private bool _playbackActive = false;
+    private bool _showCountry = false;
+    private List<ChannelDto> _filteredChannels = [];
+    private string _emptyMessage = "No channels match your selection.";
+    private const string ShowCountryKey = "channelApp.showCountry";
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += OnStateChanged;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var stored = await LocalStorage.GetItemAsync<bool?>(ShowCountryKey);
+            _showCountry = stored ?? false;
+        }
+        catch
+        {
+            _showCountry = false;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        _searchText = "";
+        _playbackActive = false;
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        var filter = new ChannelFilter
+        {
+            Category = Category,
+            Country = Country,
+            FavouritesOnly = Favourites == true,
+            Playback = _playbackActive ? true : null,
+            SearchText = string.IsNullOrEmpty(_searchText) ? null : _searchText
+        };
+        _filteredChannels = ChannelService.ApplyFilter(AppState.AllChannels, filter);
+
+        if (Favourites == true)
+            _emptyMessage = "You haven't added any favourites yet. Browse channels and tap the star to add favourites.";
+        else
+            _emptyMessage = "No channels match your selection.";
+    }
+
+    private void OnSearchChanged(string text)
+    {
+        _searchText = text;
+        ApplyFilters();
+        StateHasChanged();
+    }
+
+    private void OnPlaybackToggle(bool active)
+    {
+        _playbackActive = active;
+        ApplyFilters();
+        StateHasChanged();
+    }
+
+    private async Task ToggleCountry()
+    {
+        _showCountry = !_showCountry;
+        try
+        {
+            await LocalStorage.SetItemAsync(ShowCountryKey, _showCountry);
+        }
+        catch { /* non-critical */ }
+        StateHasChanged();
+    }
+
+    private void OnStateChanged()
+    {
+        ApplyFilters();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= OnStateChanged;
+    }
+}

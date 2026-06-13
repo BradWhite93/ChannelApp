@@ -1,0 +1,218 @@
+[
+  {
+    "id": 1,
+    "name": "BBC One",
+    "category": "Entertainment",
+    "channelNumber": 1,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 1,
+    "name": "BBC One",
+    "category": "News",
+    "channelNumber": 1,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 2,
+    "name": "BBC Two",
+    "category": "Documentary",
+    "channelNumber": 2,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 2,
+    "name": "BBC Two",
+    "category": "Entertainment",
+    "channelNumber": 2,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 3,
+    "name": "ITV",
+    "category": "Entertainment",
+    "channelNumber": 3,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 4,
+    "name": "Channel 4",
+    "category": "Movies",
+    "channelNumber": 4,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 4,
+    "name": "Channel 4",
+    "category": "Entertainment",
+    "channelNumber": 4,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 5,
+    "name": "Channel 5",
+    "category": "Entertainment",
+    "channelNumber": 5,
+    "country": "United Kingdom",
+    "playback": false
+  },
+  {
+    "id": 6,
+    "name": "Sky Sports Main Event",
+    "category": "Sports",
+    "channelNumber": 401,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 7,
+    "name": "Sky News",
+    "category": "News",
+    "channelNumber": 501,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 8,
+    "name": "CBeebies",
+    "category": "Kids",
+    "channelNumber": 71,
+    "country": "United Kingdom",
+    "playback": true
+  },
+  {
+    "id": 9,
+    "name": "MTV Music",
+    "category": "Music",
+    "channelNumber": 350,
+    "country": "United Kingdom",
+    "playback": false
+  },
+  {
+    "id": 10,
+    "name": "CNN",
+    "category": "News",
+    "channelNumber": 506,
+    "country": "United States",
+    "playback": true
+  },
+  {
+    "id": 11,
+    "name": "ESPN",
+    "category": "Sports",
+    "channelNumber": 209,
+    "country": "United States",
+    "playback": true
+  },
+  {
+    "id": 11,
+    "name": "ESPN",
+    "category": "Entertainment",
+    "channelNumber": 209,
+    "country": "United States",
+    "playback": true
+  },
+  {
+    "id": 12,
+    "name": "HBO",
+    "category": "Movies",
+    "channelNumber": 301,
+    "country": "United States",
+    "playback": true
+  },
+  {
+    "id": 13,
+    "name": "Discovery Channel",
+    "category": "Documentary",
+    "channelNumber": 250,
+    "country": "United States",
+    "playback": false
+  },
+  {
+    "id": 14,
+    "name": "Nickelodeon",
+    "category": "Kids",
+    "channelNumber": 170,
+    "country": "United States",
+    "playback": true
+  },
+  {
+    "id": 15,
+    "name": "Fox News",
+    "category": "News",
+    "channelNumber": 510,
+    "country": "United States",
+    "playback": false
+  },
+  {
+    "id": 16,
+    "name": "ABC Australia",
+    "category": "Entertainment",
+    "channelNumber": 2,
+    "country": "Australia",
+    "playback": true
+  },
+  {
+    "id": 16,
+    "name": "ABC Australia",
+    "category": "News",
+    "channelNumber": 2,
+    "country": "Australia",
+    "playback": true
+  },
+  {
+    "id": 17,
+    "name": "SBS",
+    "category": "Documentary",
+    "channelNumber": 3,
+    "country": "Australia",
+    "playback": true
+  },
+  {
+    "id": 18,
+    "name": "Fox Sports Australia",
+    "category": "Sports",
+    "channelNumber": 501,
+    "country": "Australia",
+    "playback": false
+  },
+  {
+    "id": 19,
+    "name": "ABC Kids",
+    "category": "Kids",
+    "channelNumber": 22,
+    "country": "Australia",
+    "playback": true
+  },
+  {
+    "id": 20,
+    "name": "Nine Network",
+    "category": "Entertainment",
+    "channelNumber": 9,
+    "country": "Australia",
+    "playback": true
+  },
+  {
+    "id": 21,
+    "name": "National Geographic",
+    "category": "Documentary",
+    "channelNumber": 265,
+    "country": "United States",
+    "playback": true
+  },
+  {
+    "id": 22,
+    "name": "VH1",
+    "category": "Music",
+    "channelNumber": 355,
+    "country": "United States",
+    "playback": true
+  }
+]

@@ -1,0 +1,26 @@
+@using ChannelApp.Application.DTOs
+
+<div class="channel-item" role="listitem">
+    <div class="channel-info">
+        <div class="channel-main-row">
+            <span class="channel-number">@Channel.ChannelNumber</span>
+            <span class="channel-name">@Channel.Name</span>
+        </div>
+        @if (ShowCountry)
+        {
+            <div class="channel-country-row">
+                <span class="channel-number-spacer" aria-hidden="true"></span>
+                <span class="channel-country">@Channel.Country</span>
+            </div>
+        }
+    </div>
+    <FavouriteStar ChannelId="@Channel.Id" IsFavourite="@Channel.IsFavourite" />
+</div>
+
+@code {
+    [Parameter]
+    public ChannelDto Channel { get; set; } = default!;
+
+    [Parameter]
+    public bool ShowCountry { get; set; } = true;
+}

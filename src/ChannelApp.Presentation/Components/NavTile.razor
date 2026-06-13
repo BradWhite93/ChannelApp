@@ -1,0 +1,11 @@
+<button class="nav-tile" @onclick="OnClick" aria-label="@Label">
+    @Label
+</button>
+
+@code {
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

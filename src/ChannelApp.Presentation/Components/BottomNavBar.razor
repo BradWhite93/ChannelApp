@@ -1,0 +1,75 @@
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<nav class="bottom-nav-bar" aria-label="Main navigation">
+    <button class="bottom-nav-btn @(IsActive("/") ? "active" : "")"
+            @onclick='() => Navigate("/")'
+            aria-label="Home"
+            aria-current="@(IsActive("/") ? "page" : null)">
+        Home
+    </button>
+    <button class="bottom-nav-btn @(IsActive("/channels?favourites=true") ? "active" : "")"
+            @onclick='() => Navigate("/channels?favourites=true")'
+            aria-label="Favourites"
+            aria-current="@(IsActive("/channels?favourites=true") ? "page" : null)">
+        Favourites
+    </button>
+    <button class="bottom-nav-btn @(IsActive("/categories") ? "active" : "")"
+            @onclick='() => Navigate("/categories")'
+            aria-label="Categories"
+            aria-current="@(IsActive("/categories") ? "page" : null)">
+        Categories
+    </button>
+    <button class="bottom-nav-btn @(IsActive("/countries") ? "active" : "")"
+            @onclick='() => Navigate("/countries")'
+            aria-label="Countries"
+            aria-current="@(IsActive("/countries") ? "page" : null)">
+        Countries
+    </button>
+</nav>
+
+@code {
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private bool IsActive(string path)
+    {
+        var relativeUri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+        // Normalize: strip leading slash from relativeUri for comparison
+        var currentPath = "/" + relativeUri;
+
+        if (path == "/")
+        {
+            // Home is active only when exactly at root
+            return currentPath == "/" || currentPath == "";
+        }
+
+        // For favourites, check exact match including query string
+        if (path.Contains('?'))
+        {
+            return currentPath.Equals(path, StringComparison.OrdinalIgnoreCase);
+        }
+
+        // For other routes, match the path segment (ignore query strings)
+        var currentPathOnly = currentPath.Split('?')[0];
+        return currentPathOnly.Equals(path, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void Navigate(string path)
+    {
+        NavigationManager.NavigateTo(path);
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

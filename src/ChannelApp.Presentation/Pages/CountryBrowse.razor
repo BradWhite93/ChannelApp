@@ -1,0 +1,55 @@
+@page "/countries"
+@implements IDisposable
+@inject IChannelService ChannelService
+@inject AppState AppState
+@inject NavigationManager NavigationManager
+
+<PageTitle>Browse by Country</PageTitle>
+
+<BackToHome />
+<h1>Browse by Country</h1>
+
+@if (_countries.Count == 0)
+{
+    <EmptyState Message="No countries are currently available." />
+}
+else
+{
+    <div class="country-tiles">
+        @foreach (var country in _countries)
+        {
+            <NavTile Label="@country" OnClick="@(() => NavigateToCountry(country))" />
+        }
+    </div>
+}
+
+@code {
+    private List<string> _countries = [];
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += OnStateChanged;
+        LoadCountries();
+    }
+
+    private void LoadCountries()
+    {
+        _countries = ChannelService.GetDistinctCountries(AppState.AllChannels);
+    }
+
+    private void NavigateToCountry(string country)
+    {
+        NavigationManager.NavigateTo($"/channels?country={Uri.EscapeDataString(country)}");
+    }
+
+    private void OnStateChanged()
+    {
+        LoadCountries();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= OnStateChanged;
+    }
+}

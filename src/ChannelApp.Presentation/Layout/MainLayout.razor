@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject IChannelService ChannelService
+@inject AppState AppState
+@inject TextSizeService TextSizeService
+
+<div class="app-layout">
+    @if (!string.IsNullOrEmpty(AppState.LoadError))
+    {
+        <div class="error-notification" role="alert">@AppState.LoadError</div>
+    }
+
+    @Body
+
+    <BottomNavBar />
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.OnChange += StateHasChanged;
+
+        await TextSizeService.LoadAsync();
+
+        try
+        {
+            var channels = await ChannelService.GetAllAsync();
+            var favouriteIds = channels
+                .Where(c => c.IsFavourite)
+                .Select(c => c.Id)
+                .ToHashSet();
+            AppState.Initialise(channels, favouriteIds);
+        }
+        catch (Exception)
+        {
+            AppState.SetLoadError("Unable to load channel data. Please try again later.");
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,26 @@
+.nav-tile {
+    min-width: 56px;
+    min-height: 56px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    background-color: #1a237e;
+    color: #ffffff;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    transition: background-color 0.1s ease;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.nav-tile:active {
+    background-color: #4a148c;
+}
+
+.nav-tile:focus-visible {
+    outline: 3px solid #ff6f00;
+    outline-offset: 2px;
+}

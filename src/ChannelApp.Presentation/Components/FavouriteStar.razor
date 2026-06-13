@@ -1,0 +1,29 @@
+@inject IChannelService ChannelService
+@inject AppState AppState
+
+<button class="favourite-star @(IsFavourite ? "active" : "")"
+        @onclick="ToggleFavouriteAsync"
+        aria-label="@(IsFavourite ? "Remove from favourites" : "Add to favourites")">
+    @(IsFavourite ? "★" : "☆")
+</button>
+
+@code {
+    [Parameter]
+    public int ChannelId { get; set; }
+
+    [Parameter]
+    public bool IsFavourite { get; set; }
+
+    private async Task ToggleFavouriteAsync()
+    {
+        try
+        {
+            await ChannelService.ToggleFavouriteAsync(ChannelId);
+            AppState.SetFavourite(ChannelId, !IsFavourite);
+        }
+        catch (Exception)
+        {
+            AppState.SetLoadError("Could not save your favourites. Please try again.");
+        }
+    }
+}

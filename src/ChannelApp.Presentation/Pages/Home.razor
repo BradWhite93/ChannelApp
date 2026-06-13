@@ -1,0 +1,50 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+@inject AppState AppState
+@inject TextSizeService TextSizeService
+@implements IDisposable
+
+<PageTitle>Channel App</PageTitle>
+
+<div class="home-page">
+    <h1>Channel App</h1>
+
+    @if (!string.IsNullOrEmpty(AppState.LoadError))
+    {
+        <EmptyState Message="@AppState.LoadError" />
+    }
+
+    <div class="nav-tile-grid">
+        <NavTile Label="My Favourites" OnClick="@(() => NavigationManager.NavigateTo("/channels?favourites=true"))" />
+        <NavTile Label="Browse by Category" OnClick="@(() => NavigationManager.NavigateTo("/categories"))" />
+        <NavTile Label="Browse by Country" OnClick="@(() => NavigationManager.NavigateTo("/countries"))" />
+        <NavTile Label="All Channels" OnClick="@(() => NavigationManager.NavigateTo("/channels"))" />
+    </div>
+
+    <div class="text-size-controls">
+        <h2>Text Size</h2>
+        <button class="text-size-btn @(IsActive(1.0) ? "active" : "")" @onclick="@(() => SetTextSize(1.0))" aria-label="Normal text size">Normal</button>
+        <button class="text-size-btn @(IsActive(1.25) ? "active" : "")" @onclick="@(() => SetTextSize(1.25))" aria-label="Large text size">Large</button>
+        <button class="text-size-btn @(IsActive(1.5) ? "active" : "")" @onclick="@(() => SetTextSize(1.5))" aria-label="Largest text size">Largest</button>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    private bool IsActive(double multiplier) => Math.Abs(TextSizeService.CurrentMultiplier - multiplier) < 0.01;
+
+    private async Task SetTextSize(double multiplier)
+    {
+        await TextSizeService.SetAsync(multiplier);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+}

@@ -1,0 +1,51 @@
+@page "/categories"
+@inject IChannelService ChannelService
+@inject AppState AppState
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<PageTitle>Browse by Category</PageTitle>
+
+<BackToHome />
+<h1>Browse by Category</h1>
+
+<div class="category-tiles">
+    @if (_categories.Count == 0 && AppState.IsLoaded)
+    {
+        <EmptyState Message="No categories are currently available." />
+    }
+    else
+    {
+        @foreach (var category in _categories)
+        {
+            var cat = category;
+            <NavTile Label="@cat" OnClick="@(() => NavigationManager.NavigateTo($"/channels?category={Uri.EscapeDataString(cat)}"))" />
+        }
+    }
+</div>
+
+@code {
+    private List<string> _categories = [];
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += OnStateChanged;
+        LoadCategories();
+    }
+
+    private void LoadCategories()
+    {
+        _categories = ChannelService.GetDistinctCategories(AppState.AllChannels);
+    }
+
+    private void OnStateChanged()
+    {
+        LoadCategories();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= OnStateChanged;
+    }
+}

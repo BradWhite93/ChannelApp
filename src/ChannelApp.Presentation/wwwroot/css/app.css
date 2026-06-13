@@ -1,0 +1,78 @@
+/* app.css - styling for ChannelApp */
+
+html {
+    font-size: calc(18px * var(--text-scale, 1));
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-size: 1rem;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #222;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Main content */
+main {
+    padding: 1rem;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+    margin-top: 0;
+}
+
+p {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Home page grid */
+.nav-tile-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+/* Text size controls */
+.text-size-controls {
+    margin-top: 2rem;
+    padding: 0;
+}
+
+.text-size-controls h2 {
+    font-size: 16px;
+    margin-bottom: 0.5rem;
+}
+
+.text-size-btn {
+    display: inline-block;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 10px 16px;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.text-size-btn.active {
+    background: #0b1a4a;
+    color: #fff;
+    border-color: #0b1a4a;
+}
+
+.text-size-btn:focus-visible {
+    outline: 3px solid #005fcc;
+    outline-offset: 2px;
+}

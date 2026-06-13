@@ -1,0 +1,45 @@
+.channel-item {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 1rem;
+    line-height: 1.3;
+    gap: 8px;
+}
+
+.channel-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.channel-main-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.channel-country-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.channel-number,
+.channel-number-spacer {
+    font-weight: bold;
+    min-width: 3ch;
+    flex-shrink: 0;
+    text-align: left;
+}
+
+.channel-name {
+    font-weight: 500;
+}
+
+.channel-country {
+    color: #555;
+    font-size: 0.85em;
+}

@@ -1,0 +1,20 @@
+<input type="search"
+       class="search-bar"
+       value="@SearchText"
+       @oninput="HandleInput"
+       aria-label="Search channels"
+       placeholder="Search channels..." />
+
+@code {
+    [Parameter]
+    public string SearchText { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnSearchChanged { get; set; }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString() ?? string.Empty;
+        await OnSearchChanged.InvokeAsync(value);
+    }
+}
