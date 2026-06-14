@@ -37,13 +37,13 @@ public class ChannelServiceEdgeCaseTests
     }
 
     private static ChannelDto MakeDto(
-        int id, string name, string category, string country,
+        int id, string name, List<string> categories, string country,
         int channelNumber = 1, bool playback = false, bool isFavourite = false) =>
         new()
         {
             Id = id,
             Name = name,
-            Category = category,
+            Categories = categories,
             Country = country,
             ChannelNumber = channelNumber,
             Playback = playback,
@@ -64,7 +64,7 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK"),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK"),
         };
         var result = svc.GetDistinctCategories(channels);
         Assert.Equal(new[] { "Entertainment" }, result);
@@ -76,9 +76,9 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One",   "News", "UK"),
-            MakeDto(2, "BBC Two",   "News", "UK"),
-            MakeDto(3, "CNN",       "News", "US"),
+            MakeDto(1, "BBC One",   new List<string> { "News" }, "UK"),
+            MakeDto(2, "BBC Two",   new List<string> { "News" }, "UK"),
+            MakeDto(3, "CNN",       new List<string> { "News" }, "US"),
         };
         var result = svc.GetDistinctCategories(channels);
         Assert.Equal(new[] { "News" }, result);
@@ -90,12 +90,28 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "news",  "UK"),
-            MakeDto(2, "Ch2", "NEWS",  "UK"),
-            MakeDto(3, "Ch3", "News",  "UK"),
+            MakeDto(1, "Ch1", new List<string> { "news" },  "UK"),
+            MakeDto(2, "Ch2", new List<string> { "NEWS" },  "UK"),
+            MakeDto(3, "Ch3", new List<string> { "News" },  "UK"),
         };
         var result = svc.GetDistinctCategories(channels);
         Assert.Single(result);
+    }
+
+    [Fact]
+    public void GetDistinctCategories_MultipleCategories_FlattenedAndDeduped()
+    {
+        var svc = BuildService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "Ch1", new List<string> { "News", "Entertainment" }, "UK"),
+            MakeDto(2, "Ch2", new List<string> { "Sports", "News" }, "UK"),
+        };
+        var result = svc.GetDistinctCategories(channels);
+        Assert.Equal(3, result.Count);
+        Assert.Equal("Entertainment", result[0]);
+        Assert.Equal("News", result[1]);
+        Assert.Equal("Sports", result[2]);
     }
 
     [Fact]
@@ -112,7 +128,7 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK"),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK"),
         };
         var result = svc.GetDistinctCountries(channels);
         Assert.Equal(new[] { "UK" }, result);
@@ -124,9 +140,9 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK"),
-            MakeDto(2, "BBC Two", "Drama",         "UK"),
-            MakeDto(3, "ITV",     "Entertainment", "UK"),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK"),
+            MakeDto(2, "BBC Two", new List<string> { "Drama" },         "UK"),
+            MakeDto(3, "ITV",     new List<string> { "Entertainment" }, "UK"),
         };
         var result = svc.GetDistinctCountries(channels);
         Assert.Equal(new[] { "UK" }, result);
@@ -138,9 +154,9 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "News", "uk"),
-            MakeDto(2, "Ch2", "News", "UK"),
-            MakeDto(3, "Ch3", "News", "Uk"),
+            MakeDto(1, "Ch1", new List<string> { "News" }, "uk"),
+            MakeDto(2, "Ch2", new List<string> { "News" }, "UK"),
+            MakeDto(3, "Ch3", new List<string> { "News" }, "Uk"),
         };
         var result = svc.GetDistinctCountries(channels);
         Assert.Single(result);
@@ -152,10 +168,10 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "Sports", "UK", channelNumber: 1, playback: true),
-            MakeDto(2, "Ch2", "Sports", "UK", channelNumber: 2, playback: false),
-            MakeDto(3, "Ch3", "News",   "UK", channelNumber: 3, playback: true),
-            MakeDto(4, "Ch4", "News",   "UK", channelNumber: 4, playback: false),
+            MakeDto(1, "Ch1", new List<string> { "Sports" }, "UK", channelNumber: 1, playback: true),
+            MakeDto(2, "Ch2", new List<string> { "Sports" }, "UK", channelNumber: 2, playback: false),
+            MakeDto(3, "Ch3", new List<string> { "News" },   "UK", channelNumber: 3, playback: true),
+            MakeDto(4, "Ch4", new List<string> { "News" },   "UK", channelNumber: 4, playback: false),
         };
 
         var filter = new ChannelFilter { Category = "Sports", Playback = true };
@@ -171,10 +187,10 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC News",    "News", "UK", isFavourite: true),
-            MakeDto(2, "Sky News",    "News", "UK", isFavourite: false),
-            MakeDto(3, "BBC Sports",  "Sport","UK", isFavourite: true),
-            MakeDto(4, "ITV",         "Entertainment", "UK", isFavourite: true),
+            MakeDto(1, "BBC News",    new List<string> { "News" }, "UK", isFavourite: true),
+            MakeDto(2, "Sky News",    new List<string> { "News" }, "UK", isFavourite: false),
+            MakeDto(3, "BBC Sports",  new List<string> { "Sport" },"UK", isFavourite: true),
+            MakeDto(4, "ITV",         new List<string> { "Entertainment" }, "UK", isFavourite: true),
         };
 
         var filter = new ChannelFilter { SearchText = "BBC", FavouritesOnly = true };
@@ -191,8 +207,8 @@ public class ChannelServiceEdgeCaseTests
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK"),
-            MakeDto(2, "ITV",     "Entertainment", "UK"),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK"),
+            MakeDto(2, "ITV",     new List<string> { "Entertainment" }, "UK"),
         };
 
         var filter = new ChannelFilter { Category = "Sports" };
@@ -216,7 +232,7 @@ public class ChannelServiceEdgeCaseTests
     {
         var domainChannels = new List<Channel>
         {
-            new() { Id = 1, Name = "BBC One", Category = "Entertainment", Country = "UK", ChannelNumber = 1 }
+            new() { Id = 1, Name = "BBC One", Categories = new List<string> { "Entertainment" }, Country = "UK", ChannelNumber = 1 }
         };
 
         var svc = BuildService(domainChannels, new ThrowingFavouritesRepository());
@@ -238,8 +254,8 @@ public class ChannelServiceEdgeCaseTests
     {
         var domainChannels = new List<Channel>
         {
-            new() { Id = 1, Name = "BBC One", Category = "Entertainment", Country = "UK", ChannelNumber = 1 },
-            new() { Id = 2, Name = "ITV",     Category = "Entertainment", Country = "UK", ChannelNumber = 2 },
+            new() { Id = 1, Name = "BBC One", Categories = new List<string> { "Entertainment" }, Country = "UK", ChannelNumber = 1 },
+            new() { Id = 2, Name = "ITV",     Categories = new List<string> { "Entertainment" }, Country = "UK", ChannelNumber = 2 },
         };
 
         var favRepo = new SeededThrowingFavouritesRepository(seedIds: [1]);

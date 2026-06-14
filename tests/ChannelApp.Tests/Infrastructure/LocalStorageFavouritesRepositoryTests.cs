@@ -100,7 +100,7 @@ public class LocalStorageFavouritesRepositoryTests
             {
                 Id = id,
                 Name = $"Channel {id}",
-                Category = "Test",
+                Categories = new List<string> { "Test" },
                 Country = "TestCountry",
                 ChannelNumber = id,
                 Playback = true
@@ -133,7 +133,7 @@ public class LocalStorageFavouritesRepositoryTests
             {
                 Id = id,
                 Name = $"Channel {id}",
-                Category = "Test",
+                Categories = new List<string> { "Test" },
                 Country = "TestCountry",
                 ChannelNumber = id,
                 Playback = true

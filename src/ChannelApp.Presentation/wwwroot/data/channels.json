@@ -2,15 +2,7 @@
   {
     "id": 1,
     "name": "BBC One",
-    "category": "Entertainment",
-    "channelNumber": 1,
-    "country": "United Kingdom",
-    "playback": true
-  },
-  {
-    "id": 1,
-    "name": "BBC One",
-    "category": "News",
+    "categories": ["Entertainment", "News"],
     "channelNumber": 1,
     "country": "United Kingdom",
     "playback": true
@@ -18,15 +10,7 @@
   {
     "id": 2,
     "name": "BBC Two",
-    "category": "Documentary",
-    "channelNumber": 2,
-    "country": "United Kingdom",
-    "playback": true
-  },
-  {
-    "id": 2,
-    "name": "BBC Two",
-    "category": "Entertainment",
+    "categories": ["Documentary", "Entertainment"],
     "channelNumber": 2,
     "country": "United Kingdom",
     "playback": true
@@ -34,7 +18,7 @@
   {
     "id": 3,
     "name": "ITV",
-    "category": "Entertainment",
+    "categories": ["Entertainment"],
     "channelNumber": 3,
     "country": "United Kingdom",
     "playback": true
@@ -42,15 +26,7 @@
   {
     "id": 4,
     "name": "Channel 4",
-    "category": "Movies",
-    "channelNumber": 4,
-    "country": "United Kingdom",
-    "playback": true
-  },
-  {
-    "id": 4,
-    "name": "Channel 4",
-    "category": "Entertainment",
+    "categories": ["Movies", "Entertainment"],
     "channelNumber": 4,
     "country": "United Kingdom",
     "playback": true
@@ -58,7 +34,7 @@
   {
     "id": 5,
     "name": "Channel 5",
-    "category": "Entertainment",
+    "categories": ["Entertainment"],
     "channelNumber": 5,
     "country": "United Kingdom",
     "playback": false
@@ -66,7 +42,7 @@
   {
     "id": 6,
     "name": "Sky Sports Main Event",
-    "category": "Sports",
+    "categories": ["Sports"],
     "channelNumber": 401,
     "country": "United Kingdom",
     "playback": true
@@ -74,7 +50,7 @@
   {
     "id": 7,
     "name": "Sky News",
-    "category": "News",
+    "categories": ["News"],
     "channelNumber": 501,
     "country": "United Kingdom",
     "playback": true
@@ -82,7 +58,7 @@
   {
     "id": 8,
     "name": "CBeebies",
-    "category": "Kids",
+    "categories": ["Kids"],
     "channelNumber": 71,
     "country": "United Kingdom",
     "playback": true
@@ -90,7 +66,7 @@
   {
     "id": 9,
     "name": "MTV Music",
-    "category": "Music",
+    "categories": ["Music"],
     "channelNumber": 350,
     "country": "United Kingdom",
     "playback": false
@@ -98,7 +74,7 @@
   {
     "id": 10,
     "name": "CNN",
-    "category": "News",
+    "categories": ["News"],
     "channelNumber": 506,
     "country": "United States",
     "playback": true
@@ -106,15 +82,7 @@
   {
     "id": 11,
     "name": "ESPN",
-    "category": "Sports",
-    "channelNumber": 209,
-    "country": "United States",
-    "playback": true
-  },
-  {
-    "id": 11,
-    "name": "ESPN",
-    "category": "Entertainment",
+    "categories": ["Sports", "Entertainment"],
     "channelNumber": 209,
     "country": "United States",
     "playback": true
@@ -122,7 +90,7 @@
   {
     "id": 12,
     "name": "HBO",
-    "category": "Movies",
+    "categories": ["Movies"],
     "channelNumber": 301,
     "country": "United States",
     "playback": true
@@ -130,7 +98,7 @@
   {
     "id": 13,
     "name": "Discovery Channel",
-    "category": "Documentary",
+    "categories": ["Documentary"],
     "channelNumber": 250,
     "country": "United States",
     "playback": false
@@ -138,7 +106,7 @@
   {
     "id": 14,
     "name": "Nickelodeon",
-    "category": "Kids",
+    "categories": ["Kids"],
     "channelNumber": 170,
     "country": "United States",
     "playback": true
@@ -146,7 +114,7 @@
   {
     "id": 15,
     "name": "Fox News",
-    "category": "News",
+    "categories": ["News"],
     "channelNumber": 510,
     "country": "United States",
     "playback": false
@@ -154,15 +122,7 @@
   {
     "id": 16,
     "name": "ABC Australia",
-    "category": "Entertainment",
-    "channelNumber": 2,
-    "country": "Australia",
-    "playback": true
-  },
-  {
-    "id": 16,
-    "name": "ABC Australia",
-    "category": "News",
+    "categories": ["Entertainment", "News"],
     "channelNumber": 2,
     "country": "Australia",
     "playback": true
@@ -170,7 +130,7 @@
   {
     "id": 17,
     "name": "SBS",
-    "category": "Documentary",
+    "categories": ["Documentary"],
     "channelNumber": 3,
     "country": "Australia",
     "playback": true
@@ -178,7 +138,7 @@
   {
     "id": 18,
     "name": "Fox Sports Australia",
-    "category": "Sports",
+    "categories": ["Sports"],
     "channelNumber": 501,
     "country": "Australia",
     "playback": false
@@ -186,7 +146,7 @@
   {
     "id": 19,
     "name": "ABC Kids",
-    "category": "Kids",
+    "categories": ["Kids"],
     "channelNumber": 22,
     "country": "Australia",
     "playback": true
@@ -194,7 +154,7 @@
   {
     "id": 20,
     "name": "Nine Network",
-    "category": "Entertainment",
+    "categories": ["Entertainment"],
     "channelNumber": 9,
     "country": "Australia",
     "playback": true
@@ -202,7 +162,7 @@
   {
     "id": 21,
     "name": "National Geographic",
-    "category": "Documentary",
+    "categories": ["Documentary"],
     "channelNumber": 265,
     "country": "United States",
     "playback": true
@@ -210,7 +170,7 @@
   {
     "id": 22,
     "name": "VH1",
-    "category": "Music",
+    "categories": ["Music"],
     "channelNumber": 355,
     "country": "United States",
     "playback": true

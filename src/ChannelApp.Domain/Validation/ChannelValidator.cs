@@ -19,15 +19,23 @@ public static class ChannelValidator
                 "Channel Name must not be null or whitespace.",
                 nameof(channel));
 
-        if (string.IsNullOrWhiteSpace(channel.Category))
+        if (channel.Categories is null || channel.Categories.Count == 0)
             throw new ArgumentException(
-                "Channel Category must not be null or whitespace.",
+                "Channel Categories must not be null or empty.",
                 nameof(channel));
 
-        if (channel.Category.Length > 100)
-            throw new ArgumentException(
-                $"Channel Category must not exceed 100 characters, but was {channel.Category.Length} characters.",
-                nameof(channel));
+        foreach (var category in channel.Categories)
+        {
+            if (string.IsNullOrWhiteSpace(category))
+                throw new ArgumentException(
+                    "Each category must not be null or whitespace.",
+                    nameof(channel));
+
+            if (category.Length > 100)
+                throw new ArgumentException(
+                    $"Each category must not exceed 100 characters, but was {category.Length} characters.",
+                    nameof(channel));
+        }
 
         if (string.IsNullOrWhiteSpace(channel.Country))
             throw new ArgumentException(

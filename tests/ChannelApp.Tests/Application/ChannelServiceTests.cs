@@ -21,9 +21,9 @@ public class ChannelServiceTests
     private static ChannelService CreateService() =>
         new ChannelService(new StubChannelRepository(), new StubFavouritesRepository());
 
-    private static ChannelDto MakeDto(int id, string name, string category, string country,
+    private static ChannelDto MakeDto(int id, string name, List<string> categories, string country,
         int channelNumber, bool playback = false, bool isFavourite = false)
-        => new() { Id = id, Name = name, Category = category, Country = country,
+        => new() { Id = id, Name = name, Categories = categories, Country = country,
                    ChannelNumber = channelNumber, Playback = playback, IsFavourite = isFavourite };
 
     [Fact]
@@ -32,11 +32,11 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "Sports", "UK", 1),
-            MakeDto(2, "Ch2", "News", "UK", 2),
-            MakeDto(3, "Ch3", "Sports", "US", 3),
-            MakeDto(4, "Ch4", "Entertainment", "UK", 4),
-            MakeDto(5, "Ch5", "NEWS", "US", 5),
+            MakeDto(1, "Ch1", new List<string> { "Sports" }, "UK", 1),
+            MakeDto(2, "Ch2", new List<string> { "News" }, "UK", 2),
+            MakeDto(3, "Ch3", new List<string> { "Sports" }, "US", 3),
+            MakeDto(4, "Ch4", new List<string> { "Entertainment" }, "UK", 4),
+            MakeDto(5, "Ch5", new List<string> { "NEWS" }, "US", 5),
         };
 
         var result = svc.GetDistinctCategories(channels);
@@ -54,18 +54,18 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
-            MakeDto(2, "Sky Sports", "Sports", "UK", 2),
-            MakeDto(3, "CNN", "News", "US", 3),
-            MakeDto(4, "ESPN", "Sports", "US", 4),
-            MakeDto(5, "ITV", "Entertainment", "UK", 5),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK", 1),
+            MakeDto(2, "Sky Sports", new List<string> { "Sports" }, "UK", 2),
+            MakeDto(3, "CNN", new List<string> { "News" }, "US", 3),
+            MakeDto(4, "ESPN", new List<string> { "Sports" }, "US", 4),
+            MakeDto(5, "ITV", new List<string> { "Entertainment" }, "UK", 5),
         };
 
         var filter = new ChannelFilter { Category = "Sports" };
         var result = svc.ApplyFilter(channels, filter);
 
         Assert.Equal(2, result.Count);
-        Assert.All(result, ch => Assert.Equal("Sports", ch.Category, StringComparer.OrdinalIgnoreCase));
+        Assert.All(result, ch => Assert.Contains("Sports", ch.Categories));
         Assert.Contains(result, c => c.Id == 2);
         Assert.Contains(result, c => c.Id == 4);
     }
@@ -76,10 +76,10 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "NEWS", "UK", 1),
-            MakeDto(2, "Ch2", "news", "UK", 2),
-            MakeDto(3, "Ch3", "News", "UK", 3),
-            MakeDto(4, "Ch4", "Sports", "UK", 4),
+            MakeDto(1, "Ch1", new List<string> { "NEWS" }, "UK", 1),
+            MakeDto(2, "Ch2", new List<string> { "news" }, "UK", 2),
+            MakeDto(3, "Ch3", new List<string> { "News" }, "UK", 3),
+            MakeDto(4, "Ch4", new List<string> { "Sports" }, "UK", 4),
         };
 
         var filter = new ChannelFilter { Category = "news" };
@@ -89,15 +89,36 @@ public class ChannelServiceTests
     }
 
     [Fact]
+    public void ApplyFilter_CategoryFilter_MatchesChannelWithMultipleCategories()
+    {
+        var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", new List<string> { "Entertainment", "News" }, "UK", 1),
+            MakeDto(2, "Sky Sports", new List<string> { "Sports" }, "UK", 2),
+        };
+
+        var filterNews = new ChannelFilter { Category = "News" };
+        var resultNews = svc.ApplyFilter(channels, filterNews);
+        Assert.Single(resultNews);
+        Assert.Equal(1, resultNews[0].Id);
+
+        var filterEntertainment = new ChannelFilter { Category = "Entertainment" };
+        var resultEntertainment = svc.ApplyFilter(channels, filterEntertainment);
+        Assert.Single(resultEntertainment);
+        Assert.Equal(1, resultEntertainment[0].Id);
+    }
+
+    [Fact]
     public void ApplyFilter_CountryFilter_ReturnsOnlyMatchingCountry()
     {
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
-            MakeDto(2, "CNN", "News", "US", 2),
-            MakeDto(3, "Sky", "Sports", "UK", 3),
-            MakeDto(4, "Fox", "News", "US", 4),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK", 1),
+            MakeDto(2, "CNN", new List<string> { "News" }, "US", 2),
+            MakeDto(3, "Sky", new List<string> { "Sports" }, "UK", 3),
+            MakeDto(4, "Fox", new List<string> { "News" }, "US", 4),
         };
 
         var filter = new ChannelFilter { Country = "US" };
@@ -115,10 +136,10 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK", 1, isFavourite: true),
-            MakeDto(2, "CNN", "News", "US", 2, isFavourite: false),
-            MakeDto(3, "Sky", "Sports", "UK", 3, isFavourite: true),
-            MakeDto(4, "Fox", "News", "US", 4, isFavourite: false),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK", 1, isFavourite: true),
+            MakeDto(2, "CNN", new List<string> { "News" }, "US", 2, isFavourite: false),
+            MakeDto(3, "Sky", new List<string> { "Sports" }, "UK", 3, isFavourite: true),
+            MakeDto(4, "Fox", new List<string> { "News" }, "US", 4, isFavourite: false),
         };
 
         var filter = new ChannelFilter { FavouritesOnly = true };
@@ -136,9 +157,9 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK", 1, isFavourite: true),
-            MakeDto(2, "CNN", "News", "US", 2, isFavourite: false),
-            MakeDto(3, "Sky", "Sports", "UK", 3, isFavourite: true),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK", 1, isFavourite: true),
+            MakeDto(2, "CNN", new List<string> { "News" }, "US", 2, isFavourite: false),
+            MakeDto(3, "Sky", new List<string> { "Sports" }, "UK", 3, isFavourite: true),
         };
 
         var filter = new ChannelFilter { FavouritesOnly = false };
@@ -153,11 +174,11 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "News", "UK", 50),
-            MakeDto(2, "Ch2", "Sports", "UK", 10),
-            MakeDto(3, "Ch3", "Entertainment", "US", 30),
-            MakeDto(4, "Ch4", "News", "US", 5),
-            MakeDto(5, "Ch5", "Sports", "UK", 99),
+            MakeDto(1, "Ch1", new List<string> { "News" }, "UK", 50),
+            MakeDto(2, "Ch2", new List<string> { "Sports" }, "UK", 10),
+            MakeDto(3, "Ch3", new List<string> { "Entertainment" }, "US", 30),
+            MakeDto(4, "Ch4", new List<string> { "News" }, "US", 5),
+            MakeDto(5, "Ch5", new List<string> { "Sports" }, "UK", 99),
         };
 
         var filter = new ChannelFilter();
@@ -177,10 +198,10 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "News", "UK", 1, playback: true),
-            MakeDto(2, "Ch2", "News", "UK", 2, playback: false),
-            MakeDto(3, "Ch3", "Sports", "UK", 3, playback: true),
-            MakeDto(4, "Ch4", "Sports", "UK", 4, playback: false),
+            MakeDto(1, "Ch1", new List<string> { "News" }, "UK", 1, playback: true),
+            MakeDto(2, "Ch2", new List<string> { "News" }, "UK", 2, playback: false),
+            MakeDto(3, "Ch3", new List<string> { "Sports" }, "UK", 3, playback: true),
+            MakeDto(4, "Ch4", new List<string> { "Sports" }, "UK", 4, playback: false),
         };
 
         var filter = new ChannelFilter { Playback = true };
@@ -198,9 +219,9 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "News", "UK", 1, playback: true),
-            MakeDto(2, "Ch2", "News", "UK", 2, playback: false),
-            MakeDto(3, "Ch3", "Sports", "UK", 3, playback: true),
+            MakeDto(1, "Ch1", new List<string> { "News" }, "UK", 1, playback: true),
+            MakeDto(2, "Ch2", new List<string> { "News" }, "UK", 2, playback: false),
+            MakeDto(3, "Ch3", new List<string> { "Sports" }, "UK", 3, playback: true),
         };
 
         var filter = new ChannelFilter { Playback = null };
@@ -215,10 +236,10 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
-            MakeDto(2, "BBC Two", "Entertainment", "UK", 2),
-            MakeDto(3, "Sky Sports", "Sports", "UK", 3),
-            MakeDto(4, "CNN", "News", "US", 4),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK", 1),
+            MakeDto(2, "BBC Two", new List<string> { "Entertainment" }, "UK", 2),
+            MakeDto(3, "Sky Sports", new List<string> { "Sports" }, "UK", 3),
+            MakeDto(4, "CNN", new List<string> { "News" }, "US", 4),
         };
 
         var filter = new ChannelFilter { SearchText = "BBC" };
@@ -236,9 +257,9 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "News", "UK", 1),
-            MakeDto(2, "bbc two", "News", "UK", 2),
-            MakeDto(3, "Sky", "News", "UK", 3),
+            MakeDto(1, "BBC One", new List<string> { "News" }, "UK", 1),
+            MakeDto(2, "bbc two", new List<string> { "News" }, "UK", 2),
+            MakeDto(3, "Sky", new List<string> { "News" }, "UK", 3),
         };
 
         var filter = new ChannelFilter { SearchText = "bbc" };
@@ -253,11 +274,11 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
-            MakeDto(1, "BBC One HD", "Entertainment", "UK", 101),
-            MakeDto(2, "CNN", "News", "US", 2),
-            MakeDto(2, "CNN HD", "News", "US", 102),
-            MakeDto(3, "Sky", "Sports", "UK", 3),
+            MakeDto(1, "BBC One", new List<string> { "Entertainment" }, "UK", 1),
+            MakeDto(1, "BBC One HD", new List<string> { "Entertainment" }, "UK", 101),
+            MakeDto(2, "CNN", new List<string> { "News" }, "US", 2),
+            MakeDto(2, "CNN HD", new List<string> { "News" }, "US", 102),
+            MakeDto(3, "Sky", new List<string> { "Sports" }, "UK", 3),
         };
 
         var filter = new ChannelFilter();
@@ -273,10 +294,10 @@ public class ChannelServiceTests
         var svc = CreateService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", "Sports", "UK", 1),
-            MakeDto(1, "Ch1 HD", "Sports", "UK", 101),
-            MakeDto(2, "Ch2", "Sports", "US", 2),
-            MakeDto(3, "Ch3", "News", "UK", 3),
+            MakeDto(1, "Ch1", new List<string> { "Sports" }, "UK", 1),
+            MakeDto(1, "Ch1 HD", new List<string> { "Sports" }, "UK", 101),
+            MakeDto(2, "Ch2", new List<string> { "Sports" }, "US", 2),
+            MakeDto(3, "Ch3", new List<string> { "News" }, "UK", 3),
         };
 
         var filter = new ChannelFilter { Category = "Sports" };

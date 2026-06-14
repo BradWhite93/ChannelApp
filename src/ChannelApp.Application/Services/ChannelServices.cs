@@ -29,7 +29,7 @@ public class ChannelService : IChannelService
         {
             Id = c.Id,
             Name = c.Name,
-            Category = c.Category,
+            Categories = c.Categories,
             Country = c.Country,
             ChannelNumber = c.ChannelNumber,
             Playback = c.Playback,
@@ -42,7 +42,7 @@ public class ChannelService : IChannelService
     public List<string> GetDistinctCategories(IEnumerable<ChannelDto> channels)
     {
         return channels
-            .Select(c => c.Category)
+            .SelectMany(c => c.Categories)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(cat => cat, StringComparer.OrdinalIgnoreCase)
             .ToList();
@@ -63,7 +63,7 @@ public class ChannelService : IChannelService
 
         if (!string.IsNullOrEmpty(filter.Category))
             result = result.Where(c =>
-                string.Equals(c.Category, filter.Category, StringComparison.OrdinalIgnoreCase));
+                c.Categories.Any(cat => cat.Equals(filter.Category, StringComparison.OrdinalIgnoreCase)));
 
         if (!string.IsNullOrEmpty(filter.Country))
             result = result.Where(c =>

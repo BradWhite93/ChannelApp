@@ -15,7 +15,7 @@ public class ChannelValidatorTests
         {
             Id = id,
             Name = name,
-            Category = category,
+            Categories = new List<string> { category },
             Country = country,
         };
 
@@ -35,7 +35,7 @@ public class ChannelValidatorTests
         {
             Id = id,
             Name = "Valid Name",
-            Category = "News",
+            Categories = new List<string> { "News" },
             Country = "UK",
         };
 
@@ -54,7 +54,7 @@ public class ChannelValidatorTests
         {
             Id = 1,
             Name = name,
-            Category = "News",
+            Categories = new List<string> { "News" },
             Country = "UK",
         };
 
@@ -70,7 +70,7 @@ public class ChannelValidatorTests
         {
             Id = 1,
             Name = "BBC One",
-            Category = longCategory,
+            Categories = new List<string> { longCategory },
             Country = "UK",
         };
 
@@ -86,7 +86,72 @@ public class ChannelValidatorTests
         {
             Id = 1,
             Name = "BBC One",
-            Category = maxCategory,
+            Categories = new List<string> { maxCategory },
+            Country = "UK",
+        };
+
+        var result = ChannelValidator.Validate(channel);
+
+        Assert.Same(channel, result);
+    }
+
+    [Fact]
+    public void Validate_EmptyCategoriesList_Throws()
+    {
+        var channel = new Channel
+        {
+            Id = 1,
+            Name = "BBC One",
+            Categories = new List<string>(),
+            Country = "UK",
+        };
+
+        Assert.Throws<ArgumentException>(() => ChannelValidator.Validate(channel));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\n")]
+    [InlineData("   ")]
+    public void Validate_BlankCategoryEntry_Throws(string category)
+    {
+        var channel = new Channel
+        {
+            Id = 1,
+            Name = "BBC One",
+            Categories = new List<string> { category },
+            Country = "UK",
+        };
+
+        Assert.Throws<ArgumentException>(() => ChannelValidator.Validate(channel));
+    }
+
+    [Fact]
+    public void Validate_MultipleCategoriesOneExceedsMaxLength_Throws()
+    {
+        var longCategory = new string('A', 101);
+
+        var channel = new Channel
+        {
+            Id = 1,
+            Name = "BBC One",
+            Categories = new List<string> { "News", longCategory },
+            Country = "UK",
+        };
+
+        Assert.Throws<ArgumentException>(() => ChannelValidator.Validate(channel));
+    }
+
+    [Fact]
+    public void Validate_MultipleValidCategories_ReturnsSameInstance()
+    {
+        var channel = new Channel
+        {
+            Id = 1,
+            Name = "BBC One",
+            Categories = new List<string> { "Entertainment", "News" },
             Country = "UK",
         };
 
@@ -107,7 +172,7 @@ public class ChannelValidatorTests
         {
             Id = 1,
             Name = "BBC One",
-            Category = "News",
+            Categories = new List<string> { "News" },
             Country = country,
         };
 

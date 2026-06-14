@@ -47,8 +47,8 @@ public class ComponentTests : TestContext
     {
         var channels = new List<ChannelDto>
         {
-            new() { Id = 1, Name = "Ch1", Category = "Sports", ChannelNumber = 1, Country = "UK", Playback = true },
-            new() { Id = 2, Name = "Ch2", Category = "News", ChannelNumber = 2, Country = "UK", Playback = false }
+            new() { Id = 1, Name = "Ch1", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", Playback = true },
+            new() { Id = 2, Name = "Ch2", Categories = new List<string> { "News" }, ChannelNumber = 2, Country = "UK", Playback = false }
         };
         SetupServices(channels);
 
@@ -86,9 +86,9 @@ public class ComponentTests : TestContext
     {
         var channels = new List<ChannelDto>
         {
-            new() { Id = 1, Name = "PlaybackChannel", Category = "Sports", ChannelNumber = 1, Country = "UK", Playback = true },
-            new() { Id = 2, Name = "NonPlaybackChannel", Category = "Sports", ChannelNumber = 2, Country = "UK", Playback = false },
-            new() { Id = 3, Name = "AnotherPlayback", Category = "News", ChannelNumber = 3, Country = "US", Playback = true }
+            new() { Id = 1, Name = "PlaybackChannel", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", Playback = true },
+            new() { Id = 2, Name = "NonPlaybackChannel", Categories = new List<string> { "Sports" }, ChannelNumber = 2, Country = "UK", Playback = false },
+            new() { Id = 3, Name = "AnotherPlayback", Categories = new List<string> { "News" }, ChannelNumber = 3, Country = "US", Playback = true }
         };
         SetupServices(channels);
 
@@ -109,7 +109,7 @@ public class ComponentTests : TestContext
     {
         var channels = new List<ChannelDto>
         {
-            new() { Id = 42, Name = "TestChannel", Category = "Sports", ChannelNumber = 1, Country = "UK", Playback = true, IsFavourite = false }
+            new() { Id = 42, Name = "TestChannel", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", Playback = true, IsFavourite = false }
         };
         var appState = SetupServices(channels);
 
@@ -142,7 +142,7 @@ public class ComponentTests : TestContext
         public Task<List<ChannelDto>> GetAllAsync() => Task.FromResult(new List<ChannelDto>());
 
         public List<string> GetDistinctCategories(IEnumerable<ChannelDto> channels)
-            => channels.Select(c => c.Category).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(c => c).ToList();
+            => channels.SelectMany(c => c.Categories).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(c => c).ToList();
 
         public List<string> GetDistinctCountries(IEnumerable<ChannelDto> channels)
             => channels.Select(c => c.Country).Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(c => c).ToList();
@@ -155,7 +155,7 @@ public class ComponentTests : TestContext
             if (filter.FavouritesOnly)
                 result = result.Where(c => c.IsFavourite);
             if (!string.IsNullOrEmpty(filter.Category))
-                result = result.Where(c => c.Category.Equals(filter.Category, StringComparison.OrdinalIgnoreCase));
+                result = result.Where(c => c.Categories.Any(cat => cat.Equals(filter.Category, StringComparison.OrdinalIgnoreCase)));
             if (!string.IsNullOrEmpty(filter.Country))
                 result = result.Where(c => c.Country.Equals(filter.Country, StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrEmpty(filter.SearchText))
