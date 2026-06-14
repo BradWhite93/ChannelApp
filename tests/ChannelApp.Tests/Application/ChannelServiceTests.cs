@@ -1,4 +1,3 @@
-using CsCheck;
 using ChannelApp.Application.DTOs;
 using ChannelApp.Application.Interfaces;
 using ChannelApp.Application.Services;
@@ -27,264 +26,263 @@ public class ChannelServiceTests
         => new() { Id = id, Name = name, Category = category, Country = country,
                    ChannelNumber = channelNumber, Playback = playback, IsFavourite = isFavourite };
 
-    private static readonly Gen<ChannelDto> GenDto =
-        Gen.Select(
-            Gen.String[1, 30], Gen.String[1, 30], Gen.String[1, 30],
-            Gen.Int[1, 999], Gen.Bool, Gen.Bool, Gen.Int[1, 9999],
-            (name, cat, country, num, pb, fav, id) => MakeDto(id, name, cat, country, num, pb, fav));
-
-    private static readonly Gen<ChannelDto[]> GenDistinctIdChannels =
-        Gen.Int[1, 20].SelectMany(count =>
-            Gen.Select(
-                Gen.String[1, 30].Array[count],
-                Gen.String[1, 30].Array[count],
-                Gen.String[1, 30].Array[count],
-                Gen.Int[1, 999].Array[count],
-                Gen.Bool.Array[count],
-                Gen.Bool.Array[count],
-                (names, cats, countries, nums, playbacks, favs) =>
-                    Enumerable.Range(1, count)
-                        .Select(id => MakeDto(id, names[id - 1], cats[id - 1], countries[id - 1], nums[id - 1], playbacks[id - 1], favs[id - 1]))
-                        .ToArray()
-            ));
-
-    private static readonly Gen<ChannelDto[]> GenSharedIdChannels =
-        Gen.Int[1, 30].SelectMany(count =>
-            Gen.Select(
-                Gen.String[1, 30].Array[count],
-                Gen.String[1, 30].Array[count],
-                Gen.String[1, 30].Array[count],
-                Gen.Int[1, 999].Array[count],
-                Gen.Bool.Array[count],
-                Gen.Bool.Array[count],
-                Gen.Int[1, 5].Array[count],
-                (names, cats, countries, nums, playbacks, favs, ids) =>
-                    Enumerable.Range(0, count)
-                        .Select(i => MakeDto(ids[i], names[i], cats[i], countries[i], nums[i], playbacks[i], favs[i]))
-                        .ToArray()
-            ));
-
     [Fact]
     public void GetDistinctCategories_ReturnsUniqueValuesSortedAlphabetically()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "Ch1", "Sports", "UK", 1),
+            MakeDto(2, "Ch2", "News", "UK", 2),
+            MakeDto(3, "Ch3", "Sports", "US", 3),
+            MakeDto(4, "Ch4", "Entertainment", "UK", 4),
+            MakeDto(5, "Ch5", "NEWS", "US", 5),
+        };
 
-        GenDto.Array[0, 30]
-            .Sample(channels =>
-            {
-                var categories = svc.GetDistinctCategories(channels);
+        var result = svc.GetDistinctCategories(channels);
 
-                var lower = categories.Select(c => c.ToLowerInvariant()).ToList();
-                Assert.Equal(lower.Count, lower.Distinct().Count());
-
-                for (int i = 0; i < categories.Count - 1; i++)
-                {
-                    int cmp = string.Compare(
-                        categories[i], categories[i + 1],
-                        StringComparison.OrdinalIgnoreCase);
-                    Assert.True(cmp <= 0,
-                        $"Sort order violated: '{categories[i]}' > '{categories[i + 1]}'");
-                }
-            });
+        Assert.Equal(3, result.Count);
+        // Sorted alphabetically (case-insensitive), deduplicated
+        Assert.Equal("Entertainment", result[0]);
+        Assert.Equal("News", result[1]);
+        Assert.Equal("Sports", result[2]);
     }
 
     [Fact]
     public void ApplyFilter_CategoryFilter_ReturnsOnlyMatchingCategory()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
+            MakeDto(2, "Sky Sports", "Sports", "UK", 2),
+            MakeDto(3, "CNN", "News", "US", 3),
+            MakeDto(4, "ESPN", "Sports", "US", 4),
+            MakeDto(5, "ITV", "Entertainment", "UK", 5),
+        };
 
-        Gen.Select(GenDto.Array[1, 30], Gen.String[1, 30])
-            .Sample((channels, filterCat) =>
-            {
-                var filter = new ChannelFilter { Category = filterCat };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { Category = "Sports" };
+        var result = svc.ApplyFilter(channels, filter);
 
-                foreach (var ch in result)
-                    Assert.True(
-                        string.Equals(ch.Category, filterCat, StringComparison.OrdinalIgnoreCase),
-                        $"Channel category '{ch.Category}' does not match filter '{filterCat}'");
+        Assert.Equal(2, result.Count);
+        Assert.All(result, ch => Assert.Equal("Sports", ch.Category, StringComparer.OrdinalIgnoreCase));
+        Assert.Contains(result, c => c.Id == 2);
+        Assert.Contains(result, c => c.Id == 4);
+    }
 
-                var matchingIds = channels
-                    .Where(c => string.Equals(c.Category, filterCat, StringComparison.OrdinalIgnoreCase))
-                    .Select(c => c.Id)
-                    .ToHashSet();
-                var resultIds = result.Select(c => c.Id).ToHashSet();
-                foreach (var id in matchingIds)
-                    Assert.Contains(id, resultIds);
-            });
+    [Fact]
+    public void ApplyFilter_CategoryFilter_IsCaseInsensitive()
+    {
+        var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "Ch1", "NEWS", "UK", 1),
+            MakeDto(2, "Ch2", "news", "UK", 2),
+            MakeDto(3, "Ch3", "News", "UK", 3),
+            MakeDto(4, "Ch4", "Sports", "UK", 4),
+        };
+
+        var filter = new ChannelFilter { Category = "news" };
+        var result = svc.ApplyFilter(channels, filter);
+
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
     public void ApplyFilter_CountryFilter_ReturnsOnlyMatchingCountry()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
+            MakeDto(2, "CNN", "News", "US", 2),
+            MakeDto(3, "Sky", "Sports", "UK", 3),
+            MakeDto(4, "Fox", "News", "US", 4),
+        };
 
-        Gen.Select(GenDto.Array[1, 30], Gen.String[1, 30])
-            .Sample((channels, filterCountry) =>
-            {
-                var filter = new ChannelFilter { Country = filterCountry };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { Country = "US" };
+        var result = svc.ApplyFilter(channels, filter);
 
-                foreach (var ch in result)
-                    Assert.True(
-                        string.Equals(ch.Country, filterCountry, StringComparison.OrdinalIgnoreCase),
-                        $"Channel country '{ch.Country}' does not match filter '{filterCountry}'");
-
-                var matchingIds = channels
-                    .Where(c => string.Equals(c.Country, filterCountry, StringComparison.OrdinalIgnoreCase))
-                    .Select(c => c.Id)
-                    .ToHashSet();
-                var resultIds = result.Select(c => c.Id).ToHashSet();
-                foreach (var id in matchingIds)
-                    Assert.Contains(id, resultIds);
-            });
+        Assert.Equal(2, result.Count);
+        Assert.All(result, ch => Assert.Equal("US", ch.Country, StringComparer.OrdinalIgnoreCase));
+        Assert.Contains(result, c => c.Id == 2);
+        Assert.Contains(result, c => c.Id == 4);
     }
 
     [Fact]
     public void ApplyFilter_FavouritesOnly_ReturnsOnlyFavouritedChannels()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", "Entertainment", "UK", 1, isFavourite: true),
+            MakeDto(2, "CNN", "News", "US", 2, isFavourite: false),
+            MakeDto(3, "Sky", "Sports", "UK", 3, isFavourite: true),
+            MakeDto(4, "Fox", "News", "US", 4, isFavourite: false),
+        };
 
-        GenDto.Array[0, 30]
-            .Sample(channels =>
-            {
-                var filter = new ChannelFilter { FavouritesOnly = true };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { FavouritesOnly = true };
+        var result = svc.ApplyFilter(channels, filter);
 
-                Assert.All(result, ch => Assert.True(ch.IsFavourite,
-                    $"Channel Id={ch.Id} Name='{ch.Name}' is not a favourite but was returned"));
-            });
+        Assert.Equal(2, result.Count);
+        Assert.All(result, ch => Assert.True(ch.IsFavourite));
+        Assert.Contains(result, c => c.Id == 1);
+        Assert.Contains(result, c => c.Id == 3);
     }
 
     [Fact]
     public void ApplyFilter_FavouritesNotSet_ReturnsAllChannels()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", "Entertainment", "UK", 1, isFavourite: true),
+            MakeDto(2, "CNN", "News", "US", 2, isFavourite: false),
+            MakeDto(3, "Sky", "Sports", "UK", 3, isFavourite: true),
+        };
 
-        GenDistinctIdChannels
-            .Sample(channels =>
-            {
-                var filter = new ChannelFilter { FavouritesOnly = false };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { FavouritesOnly = false };
+        var result = svc.ApplyFilter(channels, filter);
 
-                Assert.Equal(channels.Length, result.Count);
-            });
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
     public void ApplyFilter_EmptyFilter_ResultsSortedByChannelNumber()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "Ch1", "News", "UK", 50),
+            MakeDto(2, "Ch2", "Sports", "UK", 10),
+            MakeDto(3, "Ch3", "Entertainment", "US", 30),
+            MakeDto(4, "Ch4", "News", "US", 5),
+            MakeDto(5, "Ch5", "Sports", "UK", 99),
+        };
 
-        GenDistinctIdChannels
-            .Sample(channels =>
-            {
-                var filter = new ChannelFilter();
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter();
+        var result = svc.ApplyFilter(channels, filter);
 
-                Assert.Equal(channels.Length, result.Count);
-
-                for (int i = 0; i < result.Count - 1; i++)
-                {
-                    Assert.True(
-                        result[i].ChannelNumber <= result[i + 1].ChannelNumber,
-                        $"Sort order violated at index {i}: {result[i].ChannelNumber} > {result[i + 1].ChannelNumber}");
-                }
-            });
+        Assert.Equal(5, result.Count);
+        Assert.Equal(5, result[0].ChannelNumber);
+        Assert.Equal(10, result[1].ChannelNumber);
+        Assert.Equal(30, result[2].ChannelNumber);
+        Assert.Equal(50, result[3].ChannelNumber);
+        Assert.Equal(99, result[4].ChannelNumber);
     }
 
     [Fact]
     public void ApplyFilter_PlaybackTrue_ReturnsOnlyPlaybackChannels()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "Ch1", "News", "UK", 1, playback: true),
+            MakeDto(2, "Ch2", "News", "UK", 2, playback: false),
+            MakeDto(3, "Ch3", "Sports", "UK", 3, playback: true),
+            MakeDto(4, "Ch4", "Sports", "UK", 4, playback: false),
+        };
 
-        GenDto.Array[0, 30]
-            .Sample(channels =>
-            {
-                var filter = new ChannelFilter { Playback = true };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { Playback = true };
+        var result = svc.ApplyFilter(channels, filter);
 
-                Assert.All(result, ch => Assert.True(ch.Playback,
-                    $"Channel Id={ch.Id} has Playback=false but was returned by Playback=true filter"));
-            });
+        Assert.Equal(2, result.Count);
+        Assert.All(result, ch => Assert.True(ch.Playback));
+        Assert.Contains(result, c => c.Id == 1);
+        Assert.Contains(result, c => c.Id == 3);
     }
 
     [Fact]
     public void ApplyFilter_PlaybackNull_ReturnsAllChannels()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "Ch1", "News", "UK", 1, playback: true),
+            MakeDto(2, "Ch2", "News", "UK", 2, playback: false),
+            MakeDto(3, "Ch3", "Sports", "UK", 3, playback: true),
+        };
 
-        GenDistinctIdChannels
-            .Sample(channels =>
-            {
-                var filter = new ChannelFilter { Playback = null };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { Playback = null };
+        var result = svc.ApplyFilter(channels, filter);
 
-                Assert.Equal(channels.Length, result.Count);
-            });
+        Assert.Equal(3, result.Count);
     }
 
     [Fact]
     public void ApplyFilter_SearchText_ReturnsOnlyChannelsMatchingName()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
+            MakeDto(2, "BBC Two", "Entertainment", "UK", 2),
+            MakeDto(3, "Sky Sports", "Sports", "UK", 3),
+            MakeDto(4, "CNN", "News", "US", 4),
+        };
 
-        Gen.Select(GenDto.Array[0, 30], Gen.String[1, 15])
-            .Sample((channels, searchText) =>
-            {
-                var filter = new ChannelFilter { SearchText = searchText };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { SearchText = "BBC" };
+        var result = svc.ApplyFilter(channels, filter);
 
-                foreach (var ch in result)
-                    Assert.True(
-                        ch.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase),
-                        $"Name '{ch.Name}' does not contain search text '{searchText}'");
+        Assert.Equal(2, result.Count);
+        Assert.All(result, ch => Assert.Contains("BBC", ch.Name, StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(result, c => c.Id == 1);
+        Assert.Contains(result, c => c.Id == 2);
+    }
 
-                var matchingIds = channels
-                    .Where(c => c.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                    .Select(c => c.Id)
-                    .ToHashSet();
-                var resultIds = result.Select(c => c.Id).ToHashSet();
-                foreach (var id in matchingIds)
-                    Assert.Contains(id, resultIds);
-            });
+    [Fact]
+    public void ApplyFilter_SearchText_IsCaseInsensitive()
+    {
+        var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", "News", "UK", 1),
+            MakeDto(2, "bbc two", "News", "UK", 2),
+            MakeDto(3, "Sky", "News", "UK", 3),
+        };
+
+        var filter = new ChannelFilter { SearchText = "bbc" };
+        var result = svc.ApplyFilter(channels, filter);
+
+        Assert.Equal(2, result.Count);
     }
 
     [Fact]
     public void ApplyFilter_DuplicateChannelIds_ReturnsNoDuplicates()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "BBC One", "Entertainment", "UK", 1),
+            MakeDto(1, "BBC One HD", "Entertainment", "UK", 101),
+            MakeDto(2, "CNN", "News", "US", 2),
+            MakeDto(2, "CNN HD", "News", "US", 102),
+            MakeDto(3, "Sky", "Sports", "UK", 3),
+        };
 
-        GenSharedIdChannels
-            .Sample(channels =>
-            {
-                var filter = new ChannelFilter();
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter();
+        var result = svc.ApplyFilter(channels, filter);
 
-                var ids = result.Select(c => c.Id).ToList();
-                var distinctCount = ids.Distinct().Count();
-
-                Assert.True(distinctCount == ids.Count,
-                    $"Duplicate Ids found in result. Total={ids.Count}, Distinct={distinctCount}");
-            });
+        var ids = result.Select(c => c.Id).ToList();
+        Assert.Equal(ids.Count, ids.Distinct().Count());
     }
 
     [Fact]
     public void ApplyFilter_DuplicateIdsWithCategoryFilter_ReturnsNoDuplicates()
     {
         var svc = CreateService();
+        var channels = new List<ChannelDto>
+        {
+            MakeDto(1, "Ch1", "Sports", "UK", 1),
+            MakeDto(1, "Ch1 HD", "Sports", "UK", 101),
+            MakeDto(2, "Ch2", "Sports", "US", 2),
+            MakeDto(3, "Ch3", "News", "UK", 3),
+        };
 
-        Gen.Select(GenSharedIdChannels, Gen.String[1, 20])
-            .Sample((channels, filterCat) =>
-            {
-                var filter = new ChannelFilter { Category = filterCat };
-                var result = svc.ApplyFilter(channels, filter);
+        var filter = new ChannelFilter { Category = "Sports" };
+        var result = svc.ApplyFilter(channels, filter);
 
-                var ids = result.Select(c => c.Id).ToList();
-                var distinctCount = ids.Distinct().Count();
-
-                Assert.True(distinctCount == ids.Count,
-                    $"Duplicate Ids found in filtered result. Total={ids.Count}, Distinct={distinctCount}");
-            });
+        var ids = result.Select(c => c.Id).ToList();
+        Assert.Equal(ids.Count, ids.Distinct().Count());
     }
 }

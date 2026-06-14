@@ -1,24 +1,23 @@
 .back-to-home {
     display: inline-flex;
     align-items: center;
-    min-height: 48px;
-    padding: 10px 16px;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
+    justify-content: center;
+    padding: 4px 10px;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #1a237e;
+    color: #1565C0;
     background: transparent;
     border: none;
     cursor: pointer;
-    border-radius: 8px;
-    transition: background-color 0.1s ease;
+    border-radius: 6px;
+    margin-bottom: 0.25rem;
 }
 
 .back-to-home:active {
-    background-color: #e8eaf6;
+    opacity: 0.7;
 }
 
 .back-to-home:focus-visible {
-    outline: 3px solid #ff6f00;
+    outline: 2px solid #B39DDB;
     outline-offset: 2px;
 }

@@ -17,5 +17,6 @@ builder.Services.AddScoped<IFavouritesRepository, LocalStorageFavouritesReposito
 builder.Services.AddScoped<IChannelService, ChannelService>();
 builder.Services.AddScoped<AppState>();
 builder.Services.AddScoped<TextSizeService>();
+builder.Services.AddScoped<ThemeService>();
 
 await builder.Build().RunAsync();

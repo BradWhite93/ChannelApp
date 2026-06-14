@@ -1,6 +1,6 @@
 .favourite-star {
-    min-width: 56px;
-    min-height: 56px;
+    min-width: 48px;
+    min-height: 48px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -9,11 +9,10 @@
     border: none;
     cursor: pointer;
     padding: 0;
-    color: #666;
-    line-height: 1;
-    touch-action: manipulation;
+    color: #616161;
+    transition: color 0.12s ease;
 }
 
 .favourite-star.active {
-    color: #f5a623;
+    color: #B39DDB;
 }

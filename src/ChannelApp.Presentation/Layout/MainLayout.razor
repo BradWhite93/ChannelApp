@@ -3,8 +3,13 @@
 @inject IChannelService ChannelService
 @inject AppState AppState
 @inject TextSizeService TextSizeService
+@inject ThemeService ThemeService
+@inject NavigationManager NavigationManager
 
 <div class="app-layout">
+    <button class="home-btn" @onclick="GoHome" aria-label="Go home">🏠</button>
+    <button class="settings-cog" @onclick="ToggleSettings" aria-label="Settings">⚙️</button>
+
     @if (!string.IsNullOrEmpty(AppState.LoadError))
     {
         <div class="error-notification" role="alert">@AppState.LoadError</div>
@@ -15,12 +20,45 @@
     <BottomNavBar />
 </div>
 
+@if (_settingsOpen)
+{
+    <div class="settings-overlay" @onclick="ToggleSettings">
+        <div class="settings-panel" @onclick:stopPropagation="true">
+            <div class="settings-header">
+                <h2>Settings</h2>
+                <button class="settings-close" @onclick="ToggleSettings" aria-label="Close settings">✕</button>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-label">Text Size</h3>
+                <div class="settings-options">
+                    <button class="settings-btn @(IsTextSize(1.0) ? "active" : "")" @onclick="@(() => SetTextSize(1.0))">Normal</button>
+                    <button class="settings-btn @(IsTextSize(1.25) ? "active" : "")" @onclick="@(() => SetTextSize(1.25))">Large</button>
+                    <button class="settings-btn @(IsTextSize(1.5) ? "active" : "")" @onclick="@(() => SetTextSize(1.5))">Largest</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-label">Display</h3>
+                <div class="settings-options">
+                    <button class="settings-btn @(IsDarkMode() ? "active" : "")" @onclick="ToggleDarkMode">
+                        @(IsDarkMode() ? "🌙 Dark Mode On" : "🌙 Dark Mode")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
+    private bool _settingsOpen = false;
+
     protected override async Task OnInitializedAsync()
     {
         AppState.OnChange += StateHasChanged;
 
         await TextSizeService.LoadAsync();
+        await ThemeService.LoadAsync();
 
         try
         {
@@ -37,8 +75,31 @@
         }
     }
 
+    private void ToggleSettings()
+    {
+        _settingsOpen = !_settingsOpen;
+    }
+
+    private bool IsTextSize(double multiplier) => Math.Abs(TextSizeService.CurrentMultiplier - multiplier) < 0.01;
+    private bool IsDarkMode() => ThemeService.CurrentTheme == "dark";
+
+    private async Task SetTextSize(double multiplier)
+    {
+        await TextSizeService.SetAsync(multiplier);
+    }
+
+    private async Task ToggleDarkMode()
+    {
+        await ThemeService.SetAsync(IsDarkMode() ? "normal" : "dark");
+    }
+
     public void Dispose()
     {
         AppState.OnChange -= StateHasChanged;
+    }
+
+    private void GoHome()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }

@@ -1,29 +1,28 @@
-/* app.css - styling for ChannelApp */
+/* Channel App - Base theme (formerly "night mode") */
 
 html {
     font-size: calc(18px * var(--text-scale, 1));
+    --heading-color: #B39DDB;
 }
 
 body {
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
     font-size: 1rem;
     margin: 0;
     padding: 0;
-    background-color: #fff;
-    color: #222;
+    background: #2C2C3A;
+    color: #E0E0E0;
     overflow-wrap: break-word;
-    word-wrap: break-word;
-}
-
-/* Main content */
-main {
-    padding: 1rem;
+    -webkit-font-smoothing: antialiased;
 }
 
 h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
-    margin-top: 0;
+    font-size: 1.4rem;
+    margin: 0 0 1rem 0;
+    color: var(--heading-color, #B39DDB);
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: -0.3px;
 }
 
 p {
@@ -31,48 +30,222 @@ p {
     line-height: 1.5;
 }
 
-/* Home page grid */
 .nav-tile-grid {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 0.75rem;
+    gap: 12px;
 }
 
-/* Text size controls */
 .text-size-controls {
     margin-top: 2rem;
-    padding: 0;
+    border-top: 1px solid #3D3D5C;
+    padding-top: 1.5rem;
 }
 
 .text-size-controls h2 {
-    font-size: 16px;
-    margin-bottom: 0.5rem;
+    font-size: 13px;
+    margin: 0 0 0.75rem 0;
+    color: #9E9E9E;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .text-size-btn {
     display: inline-block;
     min-width: 48px;
-    min-height: 48px;
-    padding: 10px 16px;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
+    min-height: 44px;
+    padding: 10px 18px;
+    margin-right: 8px;
+    margin-bottom: 8px;
     font-size: 14px;
-    border: 2px solid #333;
+    border: 2px solid #4D4D6A;
     border-radius: 8px;
-    background: #fff;
-    color: #222;
+    background: #3D3D5C;
+    color: #E0E0E0;
     cursor: pointer;
-    touch-action: manipulation;
+    font-weight: 600;
+    transition: all 0.12s ease;
 }
 
 .text-size-btn.active {
-    background: #0b1a4a;
+    background: #5E35B1;
     color: #fff;
-    border-color: #0b1a4a;
+    border-color: #5E35B1;
 }
 
-.text-size-btn:focus-visible {
-    outline: 3px solid #005fcc;
-    outline-offset: 2px;
+.dark-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: 14px;
+    border: 2px solid #4D4D6A;
+    border-radius: 8px;
+    background: #3D3D5C;
+    color: #E0E0E0;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.12s ease;
+}
+
+.dark-mode-toggle.active {
+    background: #1E1E1E;
+    color: #FFFFFF;
+    border-color: #B39DDB;
+}
+
+/* Dark mode override */
+html[data-theme="dark"] {
+    --heading-color: #FFFFFF;
+}
+
+html[data-theme="dark"] body,
+html[data-theme="dark"] .app-layout {
+    background: #121212;
+    color: #E8E8E8;
+}
+
+html[data-theme="dark"] h1 {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .nav-tile {
+    background: #333333;
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .nav-tile:active {
+    background: #444444;
+}
+
+html[data-theme="dark"] .bottom-nav-bar {
+    background: #1E1E1E;
+    border-top-color: #333333;
+}
+
+html[data-theme="dark"] .bottom-nav-btn {
+    color: #999999;
+}
+
+html[data-theme="dark"] .bottom-nav-btn.active {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .channel-item {
+    background: #121212;
+    border-bottom-color: #2A2A2A;
+}
+
+html[data-theme="dark"] .channel-number {
+    color: #E0E0E0;
+}
+
+html[data-theme="dark"] .channel-name {
+    color: #E8E8E8;
+}
+
+html[data-theme="dark"] .channel-country {
+    color: #999999;
+}
+
+html[data-theme="dark"] .search-bar {
+    background: #1E1E1E;
+    border-color: #333333;
+    color: #E8E8E8;
+}
+
+html[data-theme="dark"] .search-bar:focus {
+    border-color: #FFFFFF;
+}
+
+html[data-theme="dark"] .search-bar::placeholder {
+    color: #666666;
+}
+
+html[data-theme="dark"] .playback-filter,
+html[data-theme="dark"] .toggle-country-btn {
+    background: #1E1E1E;
+    border-color: #333333;
+    color: #E8E8E8;
+}
+
+html[data-theme="dark"] .playback-filter.active,
+html[data-theme="dark"] .toggle-country-btn.active {
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    color: #000000;
+}
+
+html[data-theme="dark"] .text-size-controls {
+    border-top-color: #333333;
+}
+
+html[data-theme="dark"] .text-size-btn {
+    background: #1E1E1E;
+    border-color: #333333;
+    color: #E8E8E8;
+}
+
+html[data-theme="dark"] .text-size-btn.active {
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    color: #000000;
+}
+
+html[data-theme="dark"] .dark-mode-toggle {
+    background: #1E1E1E;
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .favourite-star.active {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .empty-state {
+    color: #999999;
+}
+
+html[data-theme="dark"] .filter-heading {
+    color: #666666;
+}
+
+html[data-theme="dark"] .text-size-controls h2 {
+    color: #666666;
+}
+
+html[data-theme="dark"] .error-notification {
+    background: #2A1A1A;
+    border-left-color: #EF5350;
+    color: #FF8A80;
+}
+
+html[data-theme="dark"] .settings-panel {
+    background: #1E1E1E;
+}
+
+html[data-theme="dark"] .settings-btn {
+    background: #2A2A2A;
+    border-color: #333333;
+    color: #E8E8E8;
+}
+
+html[data-theme="dark"] .settings-btn.active {
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    color: #000000;
+}
+
+html[data-theme="dark"] .settings-header h2 {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .settings-close {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .settings-label {
+    color: #666666;
 }

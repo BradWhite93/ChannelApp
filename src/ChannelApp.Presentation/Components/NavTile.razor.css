@@ -1,26 +1,19 @@
 .nav-tile {
-    min-width: 56px;
-    min-height: 56px;
-    font-size: 1rem;
+    min-height: 60px;
+    font-size: 1.05rem;
     font-weight: 600;
-    padding: 14px 20px;
+    padding: 18px 20px;
     border: none;
     border-radius: 12px;
-    background-color: #1a237e;
+    background: #5E35B1;
     color: #ffffff;
     cursor: pointer;
     text-align: center;
     width: 100%;
-    transition: background-color 0.1s ease;
+    transition: background-color 0.12s ease;
     word-break: break-word;
-    hyphens: auto;
 }
 
 .nav-tile:active {
-    background-color: #4a148c;
-}
-
-.nav-tile:focus-visible {
-    outline: 3px solid #ff6f00;
-    outline-offset: 2px;
+    background: #4527A0;
 }

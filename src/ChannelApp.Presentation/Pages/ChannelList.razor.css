@@ -1,51 +1,44 @@
 .channel-list-controls {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    gap: 10px;
+    margin-bottom: 1rem;
 }
 
 .filter-heading {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #555;
-    margin: 0.25rem 0 0 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #9E9E9E;
+    margin: 4px 0 0 0;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .filter-row {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .toggle-country-btn {
-    min-width: 56px;
-    min-height: 56px;
-    font-size: 1rem;
+    min-height: 44px;
+    font-size: 0.9rem;
     font-weight: 600;
-    padding: 14px 20px;
-    border: 2px solid #1a237e;
-    border-radius: 12px;
-    background-color: #ffffff;
-    color: #1a237e;
+    padding: 10px 20px;
+    border: 2px solid #4D4D6A;
+    border-radius: 8px;
+    background: #3D3D5C;
+    color: #E0E0E0;
     cursor: pointer;
-    text-align: center;
-    transition: background-color 0.1s ease, color 0.1s ease;
+    transition: all 0.12s ease;
 }
 
 .toggle-country-btn.active {
-    background-color: #1a237e;
+    background: #5E35B1;
+    border-color: #5E35B1;
     color: #ffffff;
 }
 
 .toggle-country-btn:active {
-    background-color: #4a148c;
-    color: #ffffff;
-}
-
-.toggle-country-btn:focus-visible {
-    outline: 3px solid #ff6f00;
-    outline-offset: 2px;
+    opacity: 0.9;
 }

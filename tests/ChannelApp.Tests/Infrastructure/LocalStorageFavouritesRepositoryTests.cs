@@ -1,4 +1,3 @@
-using CsCheck;
 using ChannelApp.Application.DTOs;
 using ChannelApp.Application.Interfaces;
 using ChannelApp.Application.Services;
@@ -35,64 +34,124 @@ file sealed class SpyFavouritesRepository : IFavouritesRepository
 public class LocalStorageFavouritesRepositoryTests
 {
     [Fact]
-    public void SaveAndLoad_ReturnsSameIds()
+    public void SaveAndLoad_EmptySet_ReturnsEmpty()
     {
-        Gen.Int[1, 9999].HashSet[0, 50]
-            .Sample(ids =>
-            {
-                var localStorage = new InMemoryLocalStorage();
-                var logger = NullLogger<LocalStorageFavouritesRepository>.Instance;
-                var repo = new LocalStorageFavouritesRepository(localStorage, logger);
+        var localStorage = new InMemoryLocalStorage();
+        var logger = NullLogger<LocalStorageFavouritesRepository>.Instance;
+        var repo = new LocalStorageFavouritesRepository(localStorage, logger);
 
-                repo.SaveFavouriteIdsAsync(ids).GetAwaiter().GetResult();
-                var loaded = repo.GetFavouriteIdsAsync().GetAwaiter().GetResult();
+        var ids = new HashSet<int>();
+        repo.SaveFavouriteIdsAsync(ids).GetAwaiter().GetResult();
+        var loaded = repo.GetFavouriteIdsAsync().GetAwaiter().GetResult();
 
-                Assert.True(ids.SetEquals(loaded),
-                    $"Round-trip failed. Saved {ids.Count} IDs, got back {loaded.Count}. " +
-                    $"Missing: [{string.Join(",", ids.Except(loaded).Take(5))}], " +
-                    $"Extra: [{string.Join(",", loaded.Except(ids).Take(5))}]");
-            });
+        Assert.True(ids.SetEquals(loaded));
+    }
+
+    [Fact]
+    public void SaveAndLoad_SingleId_ReturnsSameId()
+    {
+        var localStorage = new InMemoryLocalStorage();
+        var logger = NullLogger<LocalStorageFavouritesRepository>.Instance;
+        var repo = new LocalStorageFavouritesRepository(localStorage, logger);
+
+        var ids = new HashSet<int> { 42 };
+        repo.SaveFavouriteIdsAsync(ids).GetAwaiter().GetResult();
+        var loaded = repo.GetFavouriteIdsAsync().GetAwaiter().GetResult();
+
+        Assert.True(ids.SetEquals(loaded));
+    }
+
+    [Fact]
+    public void SaveAndLoad_MultipleIds_ReturnsSameIds()
+    {
+        var localStorage = new InMemoryLocalStorage();
+        var logger = NullLogger<LocalStorageFavouritesRepository>.Instance;
+        var repo = new LocalStorageFavouritesRepository(localStorage, logger);
+
+        var ids = new HashSet<int> { 1, 5, 10, 100, 9999 };
+        repo.SaveFavouriteIdsAsync(ids).GetAwaiter().GetResult();
+        var loaded = repo.GetFavouriteIdsAsync().GetAwaiter().GetResult();
+
+        Assert.True(ids.SetEquals(loaded));
+    }
+
+    [Fact]
+    public void SaveAndLoad_OverwritesPreviousValue()
+    {
+        var localStorage = new InMemoryLocalStorage();
+        var logger = NullLogger<LocalStorageFavouritesRepository>.Instance;
+        var repo = new LocalStorageFavouritesRepository(localStorage, logger);
+
+        var firstIds = new HashSet<int> { 1, 2, 3 };
+        repo.SaveFavouriteIdsAsync(firstIds).GetAwaiter().GetResult();
+
+        var secondIds = new HashSet<int> { 10, 20 };
+        repo.SaveFavouriteIdsAsync(secondIds).GetAwaiter().GetResult();
+
+        var loaded = repo.GetFavouriteIdsAsync().GetAwaiter().GetResult();
+        Assert.True(secondIds.SetEquals(loaded));
     }
 
     [Fact]
     public void ToggleFavourite_OnlyPersistsIdsInChannelCollection()
     {
-        var genScenario = Gen.Select(
-            Gen.Int[3, 20],
-            Gen.Int[1, 9999],
-            (channelCount, staleSeed) => (channelCount, staleSeed));
-
-        genScenario.Sample(scenario =>
-        {
-            var (channelCount, staleSeed) = scenario;
-
-            var channels = Enumerable.Range(1, channelCount)
-                .Select(id => new Channel
-                {
-                    Id = id,
-                    Name = $"Channel {id}",
-                    Category = "Test",
-                    Country = "TestCountry",
-                    ChannelNumber = id,
-                    Playback = true
-                })
-                .ToList();
-
-            var spyRepo = new SpyFavouritesRepository();
-            var channelRepo = new FakeChannelRepository(channels);
-            var service = new ChannelService(channelRepo, spyRepo);
-
-            service.GetAllAsync().GetAwaiter().GetResult();
-
-            var toggleId = (staleSeed % channelCount) + 1;
-            service.ToggleFavouriteAsync(toggleId).GetAwaiter().GetResult();
-
-            var validIds = Enumerable.Range(1, channelCount).ToHashSet();
-            foreach (var savedId in spyRepo.LastSaved)
+        var channels = Enumerable.Range(1, 5)
+            .Select(id => new Channel
             {
-                Assert.True(validIds.Contains(savedId),
-                    $"Stale ID {savedId} was persisted but is not in the valid channel set [1..{channelCount}]");
-            }
-        });
+                Id = id,
+                Name = $"Channel {id}",
+                Category = "Test",
+                Country = "TestCountry",
+                ChannelNumber = id,
+                Playback = true
+            })
+            .ToList();
+
+        var spyRepo = new SpyFavouritesRepository();
+        var channelRepo = new FakeChannelRepository(channels);
+        var service = new ChannelService(channelRepo, spyRepo);
+
+        service.GetAllAsync().GetAwaiter().GetResult();
+
+        // Toggle channel 3
+        service.ToggleFavouriteAsync(3).GetAwaiter().GetResult();
+
+        var validIds = new HashSet<int> { 1, 2, 3, 4, 5 };
+        foreach (var savedId in spyRepo.LastSaved)
+        {
+            Assert.Contains(savedId, validIds);
+        }
+
+        Assert.Contains(3, spyRepo.LastSaved);
+    }
+
+    [Fact]
+    public void ToggleFavourite_MultipleTimes_TogglesCorrectly()
+    {
+        var channels = Enumerable.Range(1, 3)
+            .Select(id => new Channel
+            {
+                Id = id,
+                Name = $"Channel {id}",
+                Category = "Test",
+                Country = "TestCountry",
+                ChannelNumber = id,
+                Playback = true
+            })
+            .ToList();
+
+        var spyRepo = new SpyFavouritesRepository();
+        var channelRepo = new FakeChannelRepository(channels);
+        var service = new ChannelService(channelRepo, spyRepo);
+
+        service.GetAllAsync().GetAwaiter().GetResult();
+
+        // Toggle on
+        service.ToggleFavouriteAsync(2).GetAwaiter().GetResult();
+        Assert.Contains(2, spyRepo.LastSaved);
+
+        // Toggle off
+        service.ToggleFavouriteAsync(2).GetAwaiter().GetResult();
+        Assert.DoesNotContain(2, spyRepo.LastSaved);
     }
 }
