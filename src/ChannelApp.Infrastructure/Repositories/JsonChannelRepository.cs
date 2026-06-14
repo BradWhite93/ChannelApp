@@ -25,7 +25,7 @@ public class JsonChannelRepository : IChannelRepository
     {
         try
         {
-            var response = await _httpClient.GetAsync("data/channels.json");
+            var response = await _httpClient.GetAsync("data/channels-enriched.json");
             response.EnsureSuccessStatusCode();
             var stream = await response.Content.ReadAsStreamAsync();
             var channels = await JsonSerializer.DeserializeAsync<List<Channel>>(stream, _jsonOptions);

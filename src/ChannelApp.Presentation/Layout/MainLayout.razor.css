@@ -2,16 +2,29 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding: 1.25rem 1rem;
+    padding: 0.75rem 1rem;
     padding-bottom: 76px;
     background: #2C2C3A;
-    position: relative;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    margin-bottom: 0.75rem;
+}
+
+.top-bar-title {
+    flex: 1;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--heading-color, #B39DDB);
+    margin: 0;
+    line-height: 1;
 }
 
 .home-btn {
-    position: absolute;
-    top: 12px;
-    left: 12px;
     width: 40px;
     height: 40px;
     display: flex;
@@ -22,7 +35,6 @@
     border: none;
     cursor: pointer;
     border-radius: 50%;
-    z-index: 10;
 }
 
 .home-btn:active {
@@ -30,9 +42,6 @@
 }
 
 .settings-cog {
-    position: absolute;
-    top: 12px;
-    right: 12px;
     width: 40px;
     height: 40px;
     display: flex;
@@ -43,7 +52,6 @@
     border: none;
     cursor: pointer;
     border-radius: 50%;
-    z-index: 10;
 }
 
 .settings-cog:active {

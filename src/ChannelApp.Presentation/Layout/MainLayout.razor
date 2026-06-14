@@ -7,8 +7,11 @@
 @inject NavigationManager NavigationManager
 
 <div class="app-layout">
-    <button class="home-btn" @onclick="GoHome" aria-label="Go home">🏠</button>
-    <button class="settings-cog" @onclick="ToggleSettings" aria-label="Settings">⚙️</button>
+    <div class="top-bar">
+        <button class="home-btn" @onclick="GoHome" aria-label="Go home">🏠</button>
+        <h1 class="top-bar-title">@PageTitle</h1>
+        <button class="settings-cog" @onclick="ToggleSettings" aria-label="Settings">⚙️</button>
+    </div>
 
     @if (!string.IsNullOrEmpty(AppState.LoadError))
     {
@@ -101,5 +104,21 @@
     private void GoHome()
     {
         NavigationManager.NavigateTo("/");
+    }
+
+    private string PageTitle
+    {
+        get
+        {
+            var path = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('?')[0].TrimStart('/');
+            return path switch
+            {
+                "" => "Channel App",
+                "categories" => "Categories",
+                "countries" => "Countries",
+                "channels" => "Channels",
+                _ => "Channel App"
+            };
+        }
     }
 }

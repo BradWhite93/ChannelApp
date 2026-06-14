@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @inject NavigationManager NavigationManager
 @inject AppState AppState
 @implements IDisposable
@@ -6,8 +6,7 @@
 <PageTitle>Channel App</PageTitle>
 
 <div class="home-page">
-    <h1>Channel App</h1>
-
+    
     @if (!string.IsNullOrEmpty(AppState.LoadError))
     {
         <EmptyState Message="@AppState.LoadError" />

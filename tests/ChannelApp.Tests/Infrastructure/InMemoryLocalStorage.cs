@@ -4,7 +4,7 @@ namespace ChannelApp.Tests.Infrastructure;
 
 public class InMemoryLocalStorage : ILocalStorageService
 {
-    private readonly Dictionary<string, object?> _store = new();
+    private readonly Dictionary<string, object?> _store = [];
 
     #pragma warning disable CS0067 // Events are required by interface but unused in tests
     public event EventHandler<ChangingEventArgs>? Changing;
