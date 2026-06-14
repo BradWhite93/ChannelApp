@@ -103,7 +103,6 @@ public class LocalStorageFavouritesRepositoryTests
                 Categories = new List<string> { "Test" },
                 Country = "TestCountry",
                 ChannelNumber = id,
-                Playback = true
             })
             .ToList();
 
@@ -136,7 +135,6 @@ public class LocalStorageFavouritesRepositoryTests
                 Categories = new List<string> { "Test" },
                 Country = "TestCountry",
                 ChannelNumber = id,
-                Playback = true
             })
             .ToList();
 

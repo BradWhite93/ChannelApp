@@ -7,6 +7,6 @@
         public required List<string> Categories { get; set; }
         public required string Country { get; set; }
         public int ChannelNumber { get; set; }
-        public bool Playback { get; set; }
+        public int Popularity { get; set; }
     }
 }

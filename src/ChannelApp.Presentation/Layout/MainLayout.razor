@@ -110,7 +110,14 @@
     {
         get
         {
-            var path = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('?')[0].TrimStart('/');
+            var uri = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            var parts = uri.Split('?');
+            var path = parts[0].TrimStart('/');
+            var query = parts.Length > 1 ? parts[1] : "";
+
+            if (path == "channels" && query.Contains("popular=true", StringComparison.OrdinalIgnoreCase))
+                return "Top Channels";
+
             return path switch
             {
                 "" => "Channel App",

@@ -38,7 +38,7 @@ public class ChannelServiceEdgeCaseTests
 
     private static ChannelDto MakeDto(
         int id, string name, List<string> categories, string country,
-        int channelNumber = 1, bool playback = false, bool isFavourite = false) =>
+        int channelNumber = 1, bool isFavourite = false) =>
         new()
         {
             Id = id,
@@ -46,7 +46,6 @@ public class ChannelServiceEdgeCaseTests
             Categories = categories,
             Country = country,
             ChannelNumber = channelNumber,
-            Playback = playback,
             IsFavourite = isFavourite,
         };
 
@@ -163,18 +162,18 @@ public class ChannelServiceEdgeCaseTests
     }
 
     [Fact]
-    public void ApplyFilter_CategoryAndPlayback_ReturnsOnlyMatchingChannels()
+    public void ApplyFilter_CategoryAndFavourites_ReturnsOnlyMatchingChannels()
     {
         var svc = BuildService();
         var channels = new List<ChannelDto>
         {
-            MakeDto(1, "Ch1", new List<string> { "Sports" }, "UK", channelNumber: 1, playback: true),
-            MakeDto(2, "Ch2", new List<string> { "Sports" }, "UK", channelNumber: 2, playback: false),
-            MakeDto(3, "Ch3", new List<string> { "News" },   "UK", channelNumber: 3, playback: true),
-            MakeDto(4, "Ch4", new List<string> { "News" },   "UK", channelNumber: 4, playback: false),
+            MakeDto(1, "Ch1", new List<string> { "Sports" }, "UK", channelNumber: 1, isFavourite: true),
+            MakeDto(2, "Ch2", new List<string> { "Sports" }, "UK", channelNumber: 2),
+            MakeDto(3, "Ch3", new List<string> { "News" },   "UK", channelNumber: 3, isFavourite: true),
+            MakeDto(4, "Ch4", new List<string> { "News" },   "UK", channelNumber: 4),
         };
 
-        var filter = new ChannelFilter { Category = "Sports", Playback = true };
+        var filter = new ChannelFilter { Category = "Sports", FavouritesOnly = true };
         var result = svc.ApplyFilter(channels, filter);
 
         Assert.Single(result);

@@ -14,10 +14,10 @@ public class CategoryBrowseTests
 
         var channels = new List<ChannelDto>
         {
-            new() { Id = 1, Name = "Ch1", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", Playback = true },
-            new() { Id = 2, Name = "Ch2", Categories = new List<string> { "News" }, ChannelNumber = 2, Country = "US", Playback = false },
-            new() { Id = 3, Name = "Ch3", Categories = new List<string> { "Entertainment" }, ChannelNumber = 3, Country = "UK", Playback = true },
-            new() { Id = 4, Name = "Ch4", Categories = new List<string> { "Music" }, ChannelNumber = 4, Country = "US", Playback = false },
+            new() { Id = 1, Name = "Ch1", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK" },
+            new() { Id = 2, Name = "Ch2", Categories = new List<string> { "News" }, ChannelNumber = 2, Country = "US" },
+            new() { Id = 3, Name = "Ch3", Categories = new List<string> { "Entertainment" }, ChannelNumber = 3, Country = "UK" },
+            new() { Id = 4, Name = "Ch4", Categories = new List<string> { "Music" }, ChannelNumber = 4, Country = "US" },
         };
 
         var categories = svc.GetDistinctCategories(channels);
@@ -42,9 +42,9 @@ public class CategoryBrowseTests
 
         var channels = new List<ChannelDto>
         {
-            new() { Id = 1, Name = "Ch1", Categories = new List<string> { "Zen" }, ChannelNumber = 1, Country = "UK", Playback = true },
-            new() { Id = 2, Name = "Ch2", Categories = new List<string> { "Action" }, ChannelNumber = 2, Country = "US", Playback = false },
-            new() { Id = 3, Name = "Ch3", Categories = new List<string> { "Music" }, ChannelNumber = 3, Country = "UK", Playback = true },
+            new() { Id = 1, Name = "Ch1", Categories = new List<string> { "Zen" }, ChannelNumber = 1, Country = "UK" },
+            new() { Id = 2, Name = "Ch2", Categories = new List<string> { "Action" }, ChannelNumber = 2, Country = "US" },
+            new() { Id = 3, Name = "Ch3", Categories = new List<string> { "Music" }, ChannelNumber = 3, Country = "UK" },
         };
 
         var categories = svc.GetDistinctCategories(channels);

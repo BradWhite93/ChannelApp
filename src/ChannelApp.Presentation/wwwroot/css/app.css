@@ -164,14 +164,12 @@ html[data-theme="dark"] .search-bar::placeholder {
     color: #666666;
 }
 
-html[data-theme="dark"] .playback-filter,
 html[data-theme="dark"] .toggle-country-btn {
     background: #1E1E1E;
     border-color: #333333;
     color: #E8E8E8;
 }
 
-html[data-theme="dark"] .playback-filter.active,
 html[data-theme="dark"] .toggle-country-btn.active {
     background: #FFFFFF;
     border-color: #FFFFFF;

@@ -9,4 +9,5 @@ public interface IChannelService
     List<string> GetDistinctCountries(IEnumerable<ChannelDto> channels);
     List<ChannelDto> ApplyFilter(IEnumerable<ChannelDto> channels, ChannelFilter filter);
     Task ToggleFavouriteAsync(int channelId);
+    List<ChannelDto> GetTopChannels(IEnumerable<ChannelDto> channels, int minPopularity = 4);
 }

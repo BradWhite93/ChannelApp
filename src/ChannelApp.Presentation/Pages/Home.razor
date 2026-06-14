@@ -14,6 +14,7 @@
 
     <div class="nav-tile-grid">
         <NavTile Label="My Favourites" OnClick="@(() => NavigationManager.NavigateTo("/channels?favourites=true"))" />
+        <NavTile Label="Top Channels" OnClick="@(() => NavigationManager.NavigateTo("/channels?popular=true"))" />
         <NavTile Label="Browse by Category" OnClick="@(() => NavigationManager.NavigateTo("/categories"))" />
         <NavTile Label="Browse by Country" OnClick="@(() => NavigationManager.NavigateTo("/countries"))" />
         <NavTile Label="All Channels" OnClick="@(() => NavigationManager.NavigateTo("/channels"))" />

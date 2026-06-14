@@ -32,7 +32,7 @@ public class ChannelService : IChannelService
             Categories = c.Categories,
             Country = c.Country,
             ChannelNumber = c.ChannelNumber,
-            Playback = c.Playback,
+            Popularity = c.Popularity,
             IsFavourite = _favouriteIds.Contains(c.Id)
         }).ToList();
 
@@ -69,9 +69,6 @@ public class ChannelService : IChannelService
             result = result.Where(c =>
                 string.Equals(c.Country, filter.Country, StringComparison.OrdinalIgnoreCase));
 
-        if (filter.Playback.HasValue)
-            result = result.Where(c => c.Playback == filter.Playback.Value);
-
         if (filter.FavouritesOnly)
             result = result.Where(c => c.IsFavourite);
 
@@ -87,7 +84,19 @@ public class ChannelService : IChannelService
                 deduped.Add(channel);
         }
 
+        if (filter.SortByPopularity)
+            return deduped.OrderByDescending(c => c.Popularity).ThenBy(c => c.ChannelNumber).ToList();
+
         return deduped.OrderBy(c => c.ChannelNumber).ToList();
+    }
+
+    public List<ChannelDto> GetTopChannels(IEnumerable<ChannelDto> channels, int minPopularity = 4)
+    {
+        return channels
+            .Where(c => c.Popularity >= minPopularity)
+            .OrderByDescending(c => c.Popularity)
+            .ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     public async Task ToggleFavouriteAsync(int channelId)

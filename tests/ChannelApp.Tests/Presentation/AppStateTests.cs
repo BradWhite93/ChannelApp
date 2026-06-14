@@ -5,7 +5,7 @@ namespace ChannelApp.Tests.Presentation;
 
 public class AppStateTests
 {
-    private static ChannelDto MakeDto(int id, string name, List<string> categories, int channelNumber, string country, bool playback = false)
+    private static ChannelDto MakeDto(int id, string name, List<string> categories, int channelNumber, string country)
         => new()
         {
             Id = id,
@@ -13,7 +13,6 @@ public class AppStateTests
             Categories = categories,
             ChannelNumber = channelNumber,
             Country = country,
-            Playback = playback,
             IsFavourite = false
         };
 

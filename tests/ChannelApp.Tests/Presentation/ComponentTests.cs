@@ -32,14 +32,14 @@ public class ComponentTests : TestContext
     }
 
     [Fact]
-    public void HomeScreen_RendersFourNavTiles()
+    public void HomeScreen_RendersFiveNavTiles()
     {
         SetupServices();
 
         var cut = RenderComponent<Home>();
 
         var navTiles = cut.FindAll("button.nav-tile");
-        Assert.Equal(4, navTiles.Count);
+        Assert.Equal(5, navTiles.Count);
     }
 
     [Fact]
@@ -47,8 +47,8 @@ public class ComponentTests : TestContext
     {
         var channels = new List<ChannelDto>
         {
-            new() { Id = 1, Name = "Ch1", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", Playback = true },
-            new() { Id = 2, Name = "Ch2", Categories = new List<string> { "News" }, ChannelNumber = 2, Country = "UK", Playback = false }
+            new() { Id = 1, Name = "Ch1", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK" },
+            new() { Id = 2, Name = "Ch2", Categories = new List<string> { "News" }, ChannelNumber = 2, Country = "UK" }
         };
         SetupServices(channels);
 
@@ -82,34 +82,11 @@ public class ComponentTests : TestContext
     }
 
     [Fact]
-    public void ChannelList_PlaybackFilterToggle_FiltersCorrectly()
-    {
-        var channels = new List<ChannelDto>
-        {
-            new() { Id = 1, Name = "PlaybackChannel", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", Playback = true },
-            new() { Id = 2, Name = "NonPlaybackChannel", Categories = new List<string> { "Sports" }, ChannelNumber = 2, Country = "UK", Playback = false },
-            new() { Id = 3, Name = "AnotherPlayback", Categories = new List<string> { "News" }, ChannelNumber = 3, Country = "US", Playback = true }
-        };
-        SetupServices(channels);
-
-        var cut = RenderComponent<ChannelList>();
-
-        var items = cut.FindAll(".channel-item");
-        Assert.Equal(3, items.Count);
-
-        var playbackButton = cut.Find("button.playback-filter");
-        playbackButton.Click();
-
-        var filteredItems = cut.FindAll(".channel-item");
-        Assert.Equal(2, filteredItems.Count);
-    }
-
-    [Fact]
     public void FavouriteStar_Toggle_UpdatesAppState()
     {
         var channels = new List<ChannelDto>
         {
-            new() { Id = 42, Name = "TestChannel", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", Playback = true, IsFavourite = false }
+            new() { Id = 42, Name = "TestChannel", Categories = new List<string> { "Sports" }, ChannelNumber = 1, Country = "UK", IsFavourite = false }
         };
         var appState = SetupServices(channels);
 
@@ -150,8 +127,6 @@ public class ComponentTests : TestContext
         public List<ChannelDto> ApplyFilter(IEnumerable<ChannelDto> channels, ChannelFilter filter)
         {
             IEnumerable<ChannelDto> result = channels;
-            if (filter.Playback.HasValue)
-                result = result.Where(c => c.Playback == filter.Playback.Value);
             if (filter.FavouritesOnly)
                 result = result.Where(c => c.IsFavourite);
             if (!string.IsNullOrEmpty(filter.Category))
@@ -164,6 +139,9 @@ public class ComponentTests : TestContext
         }
 
         public Task ToggleFavouriteAsync(int channelId) => Task.CompletedTask;
+
+        public List<ChannelDto> GetTopChannels(IEnumerable<ChannelDto> channels, int minPopularity = 4)
+            => channels.Where(c => c.Popularity >= minPopularity).OrderByDescending(c => c.Popularity).ThenBy(c => c.Name, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
     private class StubLocalStorageService : ILocalStorageService

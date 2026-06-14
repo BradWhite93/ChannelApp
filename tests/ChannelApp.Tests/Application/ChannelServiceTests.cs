@@ -22,9 +22,9 @@ public class ChannelServiceTests
         new ChannelService(new StubChannelRepository(), new StubFavouritesRepository());
 
     private static ChannelDto MakeDto(int id, string name, List<string> categories, string country,
-        int channelNumber, bool playback = false, bool isFavourite = false)
+        int channelNumber, bool isFavourite = false)
         => new() { Id = id, Name = name, Categories = categories, Country = country,
-                   ChannelNumber = channelNumber, Playback = playback, IsFavourite = isFavourite };
+                   ChannelNumber = channelNumber, IsFavourite = isFavourite };
 
     [Fact]
     public void GetDistinctCategories_ReturnsUniqueValuesSortedAlphabetically()
@@ -190,44 +190,6 @@ public class ChannelServiceTests
         Assert.Equal(30, result[2].ChannelNumber);
         Assert.Equal(50, result[3].ChannelNumber);
         Assert.Equal(99, result[4].ChannelNumber);
-    }
-
-    [Fact]
-    public void ApplyFilter_PlaybackTrue_ReturnsOnlyPlaybackChannels()
-    {
-        var svc = CreateService();
-        var channels = new List<ChannelDto>
-        {
-            MakeDto(1, "Ch1", new List<string> { "News" }, "UK", 1, playback: true),
-            MakeDto(2, "Ch2", new List<string> { "News" }, "UK", 2, playback: false),
-            MakeDto(3, "Ch3", new List<string> { "Sports" }, "UK", 3, playback: true),
-            MakeDto(4, "Ch4", new List<string> { "Sports" }, "UK", 4, playback: false),
-        };
-
-        var filter = new ChannelFilter { Playback = true };
-        var result = svc.ApplyFilter(channels, filter);
-
-        Assert.Equal(2, result.Count);
-        Assert.All(result, ch => Assert.True(ch.Playback));
-        Assert.Contains(result, c => c.Id == 1);
-        Assert.Contains(result, c => c.Id == 3);
-    }
-
-    [Fact]
-    public void ApplyFilter_PlaybackNull_ReturnsAllChannels()
-    {
-        var svc = CreateService();
-        var channels = new List<ChannelDto>
-        {
-            MakeDto(1, "Ch1", new List<string> { "News" }, "UK", 1, playback: true),
-            MakeDto(2, "Ch2", new List<string> { "News" }, "UK", 2, playback: false),
-            MakeDto(3, "Ch3", new List<string> { "Sports" }, "UK", 3, playback: true),
-        };
-
-        var filter = new ChannelFilter { Playback = null };
-        var result = svc.ApplyFilter(channels, filter);
-
-        Assert.Equal(3, result.Count);
     }
 
     [Fact]

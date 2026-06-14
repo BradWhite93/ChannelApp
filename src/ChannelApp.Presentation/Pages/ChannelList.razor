@@ -11,12 +11,17 @@
                 <SearchBar SearchText="@_searchText" OnSearchChanged="OnSearchChanged" />
         <h2 class="filter-heading">Filters</h2>
         <div class="filter-row">
-            <PlaybackFilter IsActive="@_playbackActive" OnToggle="OnPlaybackToggle" />
             <button class="toggle-country-btn @(_showCountry ? "active" : "")"
                     @onclick="ToggleCountry"
                     aria-pressed="@_showCountry.ToString().ToLowerInvariant()"
                     aria-label="Show country">
                 Show Country
+            </button>
+            <button class="toggle-country-btn @(_sortByPopularity ? "active" : "")"
+                    @onclick="TogglePopularitySort"
+                    aria-pressed="@_sortByPopularity.ToString().ToLowerInvariant()"
+                    aria-label="Sort by popularity">
+                Sort: Popular
             </button>
         </div>
     </div>
@@ -46,9 +51,12 @@
     [SupplyParameterFromQuery(Name = "favourites")]
     public bool? Favourites { get; set; }
 
+    [SupplyParameterFromQuery(Name = "popular")]
+    public bool? Popular { get; set; }
+
     private string _searchText = "";
-    private bool _playbackActive = false;
     private bool _showCountry = false;
+    private bool _sortByPopularity = false;
     private List<ChannelDto> _filteredChannels = [];
     private string _emptyMessage = "No channels match your selection.";
     private const string ShowCountryKey = "channelApp.showCountry";
@@ -74,24 +82,37 @@
     protected override void OnParametersSet()
     {
         _searchText = "";
-        _playbackActive = false;
+        _sortByPopularity = false;
         ApplyFilters();
     }
 
     private void ApplyFilters()
     {
+        List<ChannelDto> baseChannels;
+
+        if (Popular == true)
+        {
+            baseChannels = ChannelService.GetTopChannels(AppState.AllChannels);
+        }
+        else
+        {
+            baseChannels = AppState.AllChannels;
+        }
+
         var filter = new ChannelFilter
         {
             Category = Category,
             Country = Country,
             FavouritesOnly = Favourites == true,
-            Playback = _playbackActive ? true : null,
-            SearchText = string.IsNullOrEmpty(_searchText) ? null : _searchText
+            SearchText = string.IsNullOrEmpty(_searchText) ? null : _searchText,
+            SortByPopularity = _sortByPopularity
         };
-        _filteredChannels = ChannelService.ApplyFilter(AppState.AllChannels, filter);
+        _filteredChannels = ChannelService.ApplyFilter(baseChannels, filter);
 
         if (Favourites == true)
             _emptyMessage = "You haven't added any favourites yet. Browse channels and tap the star to add favourites.";
+        else if (Popular == true)
+            _emptyMessage = "No top channels found.";
         else
             _emptyMessage = "No channels match your selection.";
     }
@@ -99,13 +120,6 @@
     private void OnSearchChanged(string text)
     {
         _searchText = text;
-        ApplyFilters();
-        StateHasChanged();
-    }
-
-    private void OnPlaybackToggle(bool active)
-    {
-        _playbackActive = active;
         ApplyFilters();
         StateHasChanged();
     }
@@ -118,6 +132,13 @@
             await LocalStorage.SetItemAsync(ShowCountryKey, _showCountry);
         }
         catch { /* non-critical */ }
+        StateHasChanged();
+    }
+
+    private void TogglePopularitySort()
+    {
+        _sortByPopularity = !_sortByPopularity;
+        ApplyFilters();
         StateHasChanged();
     }
 
