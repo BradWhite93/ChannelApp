@@ -29,6 +29,7 @@ The Channel App follows Clean Architecture with four layers arranged in a strict
 - **Dependencies:** Application + Infrastructure (Infrastructure is referenced only in the composition root)
 - **Example component:** `Home.razor` (the landing page with navigation tiles)
 - **Example service:** `AppState` (scoped service holding in-memory channel collection and firing change events for cross-component reactivity)
+- **Example service:** `ThemeService` (manages normal/dark theme mode, persisted to localStorage)
 
 ## Dependency Rules
 

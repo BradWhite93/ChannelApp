@@ -6,7 +6,10 @@ A Progressive Web App (PWA) for browsing TV channels, built with Blazor WebAssem
 
 - Browse channels by category, country, or view all
 - Mark channels as favourites with persistent local storage
-- Text size adjustment (Normal, Large, Largest)
+- Text size adjustment (Normal, Large, Largest) via settings overlay
+- Dark mode toggle (normal dark purple-grey theme / true dark mode)
+- Settings accessible via ⚙️ cog icon (top-right) — opens as a bottom-sheet overlay
+- Navigation home via 🏠 icon (top-left, always visible) and bottom nav bar
 - Playback filter and search
 - Fully offline after initial install — no server dependency
 - Installable as a standalone app on Android phones
@@ -55,7 +58,7 @@ The published output in `publish_output/wwwroot` can be served by any static fil
 ## Tech Stack
 
 - **Blazor WebAssembly** — C# in the browser, PWA support built-in
-- **Blazored.LocalStorage** — persistent favourites and preferences
+- **Blazored.LocalStorage** — persistent favourites, text size, and theme preferences
 - **CsCheck** — property-based testing
 - **bUnit** — Blazor component testing
 - **xUnit** — test runner
