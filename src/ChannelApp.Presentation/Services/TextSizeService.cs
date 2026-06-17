@@ -42,6 +42,6 @@ public class TextSizeService
     private async Task ApplyCssPropertyAsync(double multiplier)
     {
         var value = multiplier.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        await _jsRuntime.InvokeVoidAsync("eval", $"document.documentElement.style.setProperty('--text-scale', '{value}')");
+        await _jsRuntime.InvokeVoidAsync("setTextScale", value);
     }
 }

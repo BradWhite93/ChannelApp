@@ -74,7 +74,8 @@ public class ChannelService : IChannelService
 
         if (!string.IsNullOrEmpty(filter.SearchText))
             result = result.Where(c =>
-                c.Name.Contains(filter.SearchText, StringComparison.OrdinalIgnoreCase));
+                c.Name.Contains(filter.SearchText, StringComparison.OrdinalIgnoreCase) ||
+                c.ChannelNumber.ToString().Contains(filter.SearchText));
 
         var seen = new HashSet<int>();
         var deduped = new List<ChannelDto>();

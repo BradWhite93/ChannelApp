@@ -41,7 +41,6 @@ public class ThemeService
 
     private async Task ApplyThemeAsync(string theme)
     {
-        await _jsRuntime.InvokeVoidAsync("eval",
-            $"document.documentElement.setAttribute('data-theme', '{theme}')");
+        await _jsRuntime.InvokeVoidAsync("setTheme", theme);
     }
 }
