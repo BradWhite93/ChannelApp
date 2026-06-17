@@ -247,3 +247,8 @@ html[data-theme="dark"] .settings-close {
 html[data-theme="dark"] .settings-label {
     color: #666666;
 }
+
+/* Prevent focus outline on non-interactive elements */
+h1:focus, h2:focus, div:focus, p:focus {
+    outline: none;
+}

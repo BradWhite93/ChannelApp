@@ -22,6 +22,7 @@
     color: var(--heading-color, #B39DDB);
     margin: 0;
     line-height: 1;
+    outline: none;
 }
 
 .home-btn {
