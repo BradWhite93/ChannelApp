@@ -65,7 +65,7 @@
 
     private void Navigate(string path)
     {
-        NavigationManager.NavigateTo(path);
+        NavigationManager.NavigateTo(path.TrimStart('/'));
     }
 
     public void Dispose()

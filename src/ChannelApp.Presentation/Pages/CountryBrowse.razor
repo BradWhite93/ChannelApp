@@ -37,7 +37,7 @@ else
 
     private void NavigateToCountry(string country)
     {
-        NavigationManager.NavigateTo($"/channels?country={Uri.EscapeDataString(country)}");
+        NavigationManager.NavigateTo($"channels?country={Uri.EscapeDataString(country)}");
     }
 
     private void OnStateChanged()

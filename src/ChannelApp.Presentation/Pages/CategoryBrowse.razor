@@ -14,11 +14,11 @@
     }
     else
     {
-        <NavTile Label="Top Channels" OnClick="@(() => NavigationManager.NavigateTo("/channels?popular=true"))" />
+        <NavTile Label="Top Channels" OnClick="@(() => NavigationManager.NavigateTo("channels?popular=true"))" />
         @foreach (var category in _categories)
         {
             var cat = category;
-            <NavTile Label="@cat" OnClick="@(() => NavigationManager.NavigateTo($"/channels?category={Uri.EscapeDataString(cat)}"))" />
+            <NavTile Label="@cat" OnClick="@(() => NavigationManager.NavigateTo($"channels?category={Uri.EscapeDataString(cat)}"))" />
         }
     }
 </div>
