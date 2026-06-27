@@ -43,9 +43,19 @@ async function onFetch(event) {
         const shouldServeIndexHtml = event.request.mode === 'navigate'
             && !manifestUrlList.some(url => url === event.request.url);
 
-        const request = shouldServeIndexHtml ? new URL('index.html', baseUrl).href : event.request;
         const cache = await caches.open(cacheName);
-        cachedResponse = await cache.match(request);
+        
+        if (shouldServeIndexHtml) {
+            cachedResponse = await cache.match('index.html');
+            if (!cachedResponse) {
+                cachedResponse = await cache.match(new URL('index.html', baseUrl).href);
+            }
+            if (!cachedResponse) {
+                cachedResponse = await cache.match(event.request);
+            }
+        } else {
+            cachedResponse = await cache.match(event.request);
+        }
     }
 
     return cachedResponse || fetch(event.request);
