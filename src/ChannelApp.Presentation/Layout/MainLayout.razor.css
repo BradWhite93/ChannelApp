@@ -4,7 +4,7 @@
     min-height: 100vh;
     padding: 0.75rem 1rem;
     padding-bottom: 76px;
-    background: #2C2C3A;
+    background: var(--app-bg, #2C2C3A);
 }
 
 .top-bar {
@@ -15,7 +15,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: #2C2C3A;
+    background: var(--app-bg, #2C2C3A);
     padding: 0.5rem 0;
 }
 

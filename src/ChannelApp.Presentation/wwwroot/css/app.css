@@ -3,6 +3,7 @@
 html {
     font-size: calc(18px * var(--text-scale, 1));
     --heading-color: #B39DDB;
+    --app-bg: #2C2C3A;
 }
 
 body {
@@ -99,6 +100,7 @@ p {
 /* Dark mode override */
 html[data-theme="dark"] {
     --heading-color: #FFFFFF;
+    --app-bg: #121212;
 }
 
 html[data-theme="dark"] body,
