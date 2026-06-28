@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="ChannelApp.Presentation.styles.css" rel="stylesheet" />
-    <meta name="theme-color" content="#5B2D8E" />
+    <meta name="theme-color" content="#2C2C3A" />
 </head>
 <body>
     <div id="app">Loading...</div>
@@ -18,7 +18,7 @@
         navigator.serviceWorker.register('service-worker.js');
         window.setTheme = function(theme) {
             document.documentElement.setAttribute('data-theme', theme);
-            var color = theme === 'dark' ? '#121212' : '#5B2D8E';
+            var color = theme === 'dark' ? '#121212' : '#2C2C3A';
             document.querySelector('meta[name="theme-color"]').setAttribute('content', color);
         };
         window.setTextScale = function(value) {

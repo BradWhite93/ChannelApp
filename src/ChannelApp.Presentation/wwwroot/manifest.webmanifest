@@ -6,7 +6,7 @@
   "scope": "/ChannelApp/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#5B2D8E",
+  "theme_color": "#2C2C3A",
   "prefer_related_applications": false,
   "icons": [
     {
