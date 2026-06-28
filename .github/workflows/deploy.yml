@@ -31,12 +31,10 @@ jobs:
       - name: Publish
         run: dotnet publish src/ChannelApp.Presentation/ChannelApp.Presentation.csproj -c Release -o publish
 
-      - name: Fix base path for GitHub Pages
+      - name: Fix paths for GitHub Pages subpath
         run: |
           sed -i 's|<base href="/" />|<base href="/ChannelApp/" />|g' publish/wwwroot/index.html
           sed -i 's|const base = "/";|const base = "/ChannelApp/";|g' publish/wwwroot/service-worker.js
-          grep -q 'base href="/ChannelApp/"' publish/wwwroot/index.html && echo "Base href patched" || echo "WARNING: Base href patch FAILED"
-          grep -q '/ChannelApp/' publish/wwwroot/service-worker.js && echo "Service worker base patched" || echo "WARNING: SW base patch FAILED"
 
       - name: Add .nojekyll
         run: touch publish/wwwroot/.nojekyll
