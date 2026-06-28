@@ -252,3 +252,7 @@ html[data-theme="dark"] .settings-label {
 h1:focus, h2:focus, div:focus, p:focus {
     outline: none;
 }
+
+html[data-theme="dark"] .top-bar {
+    background: #121212;
+}

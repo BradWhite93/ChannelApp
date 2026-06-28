@@ -118,13 +118,23 @@
             if (path == "channels" && query.Contains("popular=true", StringComparison.OrdinalIgnoreCase))
                 return "Top Channels";
 
+            if (path == "channels" && query.Contains("favourites=true", StringComparison.OrdinalIgnoreCase))
+                return "My Favourites";
+
+            if (path == "channels" && !string.IsNullOrEmpty(query))
+            {
+                var value = query.Split('=').ElementAtOrDefault(1)?.Split('&').FirstOrDefault();
+                if (!string.IsNullOrEmpty(value))
+                    return Uri.UnescapeDataString(value);
+            }
+
             return path switch
             {
                 "" => "TV Channels",
                 "categories" => "Categories",
                 "countries" => "Countries",
-                "channels" => "Channels",
-                _ => "Channel App"
+                "channels" => "All Channels",
+                _ => "TV Channels"
             };
         }
     }
